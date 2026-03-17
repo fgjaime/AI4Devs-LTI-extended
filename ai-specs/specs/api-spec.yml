@@ -1210,7 +1210,7 @@ components:
         interviewDate:
           type: string
           format: date-time
-          description: Date and time when the interview will be conducted. Must be a valid ISO 8601 format (e.g., "2026-02-15T00:00:00Z" or "2026-02-15T10:00:00Z"). The frontend uses date-only input which defaults to 00:00:00Z. Can be in the past for recording completed interviews or in the future for scheduling.
+          description: Date and time when the interview will be conducted. Must be a valid ISO 8601 date-time format including the time component (e.g., "2026-02-15T10:00:00Z" or "2026-02-15T14:30:00.000Z"). The frontend uses a datetime-local input that captures both date and time. Can be in the past for recording completed interviews or in the future for scheduling.
         score:
           type: integer
           nullable: true

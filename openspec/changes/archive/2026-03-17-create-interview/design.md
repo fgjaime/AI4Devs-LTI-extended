@@ -109,7 +109,21 @@ The existing `Interview.save()` method already handles creation operations, and 
 **Alternatives Considered**:
 - Server-side only: Would provide slower feedback and worse UX
 
-### 7. Score Range Validation (0-5)
+### 7. Interview Date Input: datetime-local (Date and Time)
+**Decision**: Use `type="datetime-local"` for the interview date input, capturing both date and time from the user.
+
+**Rationale**:
+- Interviews need precise scheduling with a specific time, not just a date
+- `datetime-local` provides a native browser picker that is familiar and accessible
+- The selected value is converted to ISO 8601 via `new Date(...).toISOString()` before API submission
+- Defaults to the current date and time on form load for convenience
+- Avoids ambiguity of a date-only field where the implicit time would be hidden from the user
+
+**Alternatives Considered**:
+- Date-only input (`type="date"`): Would silently fix the time at 00:00:00Z on submission, hiding scheduling precision from the user and reducing flexibility
+- Separate date + time inputs: More complex UI with no added benefit
+
+### 8. Score Range Validation (0-5)
 **Decision**: Enforce score range of 0-5 as specified in requirements, with null allowed for scheduled interviews.
 
 **Rationale**:

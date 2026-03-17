@@ -70,9 +70,9 @@ The system SHALL validate all interview fields according to the following rules:
 - **AND** the response SHALL indicate that the employee is not active
 
 #### Scenario: Interview date validation - valid ISO 8601 format
-- **WHEN** a POST request contains an interviewDate in valid ISO 8601 format (e.g., "2026-02-15T00:00:00Z" or "2026-02-15T10:00:00Z")
+- **WHEN** a POST request contains an interviewDate in valid ISO 8601 format (e.g., "2026-02-15T10:00:00Z" or "2026-02-15T14:30:00.000Z")
 - **THEN** the system SHALL accept the date and proceed with interview creation
-- **AND** the frontend SHALL format date-only selections as ISO 8601 with time 00:00:00Z
+- **AND** the frontend datetime-local input SHALL convert the selected date and time to ISO 8601 format for API submission
 
 #### Scenario: Interview date validation - invalid format
 - **WHEN** a POST request contains an interviewDate that is not a valid ISO 8601 format
@@ -135,7 +135,7 @@ The system SHALL provide a React form component within CandidateDetails that all
 
 #### Scenario: Form field rendering
 - **WHEN** a user views the interview creation form in CandidateDetails
-- **THEN** the form SHALL display all required fields: application selector, interview step selector, employee selector, interview date picker (date-only)
+- **THEN** the form SHALL display all required fields: application selector, interview step selector, employee selector, interview date and time picker (datetime-local)
 - **AND** the form SHALL display optional fields: score input (1-5 star rating), notes textarea
 - **AND** all fields SHALL be properly labeled
 - **AND** the score input SHALL display 5 stars (1-5) where clicking a star fills all stars up to that point
@@ -188,12 +188,12 @@ The system SHALL provide a React form component within CandidateDetails that all
 - **THEN** the form SHALL display the error message to the user
 - **AND** the form SHALL remain visible and allow the user to correct the data and resubmit
 
-#### Scenario: Date picker functionality
-- **WHEN** a user interacts with the interview date picker
-- **THEN** the date picker SHALL be a date-only input (not datetime)
-- **AND** the date picker SHALL allow selection of both past and future dates
-- **AND** the selected date SHALL be formatted as ISO 8601 with time set to 00:00:00Z for API submission
-- **AND** the form SHALL display helper text indicating that time defaults to 00:00:00
+#### Scenario: Date and time picker functionality
+- **WHEN** a user interacts with the interview date and time picker
+- **THEN** the picker SHALL be a datetime-local input capturing both date and time
+- **AND** the picker SHALL allow selection of both past and future dates and times
+- **AND** the selected datetime SHALL be converted to ISO 8601 format (e.g., "2026-02-15T14:30:00.000Z") for API submission
+- **AND** the form SHALL default to the current date and time on load
 
 ### Requirement: Frontend service method for interview creation
 The system SHALL provide a `createInterview(candidateId, interviewData)` method in the frontend interview or candidate service that sends a POST request to `/candidates/{candidateId}/interviews` with the provided data, handles errors appropriately, and returns the created interview data.
