@@ -1,5 +1,5 @@
 import { getCandidatesByPositionService, getCandidateNamesByPositionService } from '../positionService';
-import { findCandidateById } from '../candidateService';
+import { findCandidateById, getAllCandidates } from '../candidateService';
 import { PrismaClient } from '@prisma/client';
 import { Candidate } from '../../../domain/models/Candidate';
 
@@ -11,6 +11,8 @@ jest.mock('@prisma/client', () => {
         },
         candidate: {
             findUnique: jest.fn(),
+            findMany: jest.fn(),
+            count: jest.fn(),
         },
     };
     return { PrismaClient: jest.fn(() => mockPrisma) };
@@ -502,6 +504,76 @@ describe('Candidate Services', () => {
                 expect(result).toBeNull();
                 expect(Candidate.findOne).toHaveBeenCalledWith(999999999);
             });
+        });
+    });
+
+    describe('getAllCandidates', () => {
+        it('should include interview snapshots in applications for consultation view', async () => {
+            const candidateRows = [
+                {
+                    id: 1,
+                    firstName: 'Ada',
+                    lastName: 'Lovelace',
+                    email: 'ada@example.com',
+                    phone: null,
+                    address: null,
+                    educations: [],
+                    workExperiences: [],
+                    resumes: [],
+                    applications: [
+                        {
+                            id: 10,
+                            positionId: 20,
+                            candidateId: 1,
+                            applicationDate: new Date('2026-01-10T00:00:00.000Z'),
+                            currentInterviewStep: 2,
+                            notes: null,
+                            position: { id: 20, title: 'Backend Engineer' },
+                            interviews: [
+                                {
+                                    id: 200,
+                                    interviewDate: new Date('2026-01-15T10:00:00.000Z'),
+                                    result: 'Passed'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            (mockPrisma.candidate.findMany as jest.Mock).mockResolvedValue(candidateRows);
+            (mockPrisma.candidate.count as jest.Mock).mockResolvedValue(1);
+
+            const response = await getAllCandidates({ page: 1, limit: 10 });
+
+            expect(response.metadata.total).toBe(1);
+            expect(response.data[0].applications[0].interviews[0]).toEqual(
+                expect.objectContaining({ id: 200, result: 'Passed' })
+            );
+
+            expect(mockPrisma.candidate.findMany).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    include: expect.objectContaining({
+                        applications: {
+                            include: {
+                                position: {
+                                    select: {
+                                        id: true,
+                                        title: true
+                                    }
+                                },
+                                interviews: {
+                                    select: {
+                                        id: true,
+                                        interviewDate: true,
+                                        result: true
+                                    }
+                                }
+                            }
+                        }
+                    })
+                })
+            );
         });
     });
 }); 
