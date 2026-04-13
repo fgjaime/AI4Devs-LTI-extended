@@ -238,6 +238,15 @@ Represents a candidate's application to a specific position.
 - `interviewStep`: Many-to-one relationship with InterviewStep model
 - `interviews`: One-to-many relationship with Interview model
 
+**Consultation Read Semantics:**
+- Candidate consultation views derive a process status per `Application` using interview snapshots and current step data.
+- Recommended precedence for derived status:
+  1. Latest interview result is `Passed` -> process status `Passed`
+  2. Latest interview result is `Failed` -> process status `Failed`
+  3. Any interview exists with no terminal result OR `currentInterviewStep` is present -> process status `In Progress`
+  4. No interviews and no current step -> process status `No Interviews Yet`
+- This status is a read-model projection for consultation UX; it does not replace persisted domain fields.
+
 ### 12. Interview
 Represents individual interview sessions conducted as part of an application.
 
