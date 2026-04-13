@@ -149,6 +149,13 @@ export const getAllCandidates = async (options: {
                                     id: true,
                                     title: true
                                 }
+                            },
+                            interviews: {
+                                select: {
+                                    id: true,
+                                    interviewDate: true,
+                                    result: true
+                                }
                             }
                         }
                     }

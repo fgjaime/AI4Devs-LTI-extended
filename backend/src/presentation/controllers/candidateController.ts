@@ -27,8 +27,10 @@ export const addCandidateController = async (req: Request, res: Response) => {
  */
 export const getCandidateById = async (req: Request, res: Response) => {
     try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
+        const rawId = req.params.id;
+        const id = parseInt(rawId, 10);
+        const numericValue = Number(rawId);
+        if (Number.isNaN(id) || Number.isNaN(numericValue)) {
             return res.status(400).json({ error: 'Invalid ID format' });
         }
         const candidate = await findCandidateById(id);
