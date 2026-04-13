@@ -29,7 +29,7 @@ paths:
   /candidates:
     get:
       summary: Get all candidates
-      description: Retrieve a paginated list of candidates with optional filtering and sorting capabilities
+      description: Retrieve a paginated list of candidates with optional filtering and sorting capabilities. Each candidate includes process participation summaries through applications, associated positions, and interview result snapshots for consultation views.
       tags:
         - Candidates
       parameters:
@@ -757,7 +757,7 @@ components:
         applications:
           type: array
           items:
-            $ref: '#/components/schemas/Application'
+            $ref: '#/components/schemas/CandidateApplicationSummary'
       required:
         - firstName
         - lastName
@@ -771,21 +771,7 @@ components:
             applications:
               type: array
               items:
-                allOf:
-                  - $ref: '#/components/schemas/Application'
-                  - type: object
-                    properties:
-                      position:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          title:
-                            type: string
-                      interviews:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Interview'
+                $ref: '#/components/schemas/CandidateApplicationDetails'
 
     CreateCandidateRequest:
       type: object
@@ -1194,6 +1180,56 @@ components:
           type: string
           nullable: true
           description: Application notes
+
+    CandidateApplicationSummary:
+      allOf:
+        - $ref: '#/components/schemas/Application'
+        - type: object
+          properties:
+            position:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+            interviews:
+              type: array
+              description: Minimal interview snapshots used for process status consultation.
+              items:
+                $ref: '#/components/schemas/ApplicationInterviewSummary'
+
+    CandidateApplicationDetails:
+      allOf:
+        - $ref: '#/components/schemas/Application'
+        - type: object
+          properties:
+            position:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+            interviews:
+              type: array
+              items:
+                $ref: '#/components/schemas/Interview'
+
+    ApplicationInterviewSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Interview ID
+        interviewDate:
+          type: string
+          format: date-time
+          description: Scheduled or recorded interview date
+        result:
+          type: string
+          nullable: true
+          description: Interview result snapshot (e.g., Pending, Passed, Failed)
 
     CreateInterviewRequest:
       type: object
