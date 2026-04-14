@@ -26,7 +26,6 @@
     "types": ["cypress", "node"]
   },
   "include": [
-    "src",
-    "cypress/**/*.ts"
+    "src"
   ]
 }
