@@ -37,7 +37,7 @@ Recruiters currently cannot update position details after creation, requiring di
 - `frontend/cypress/e2e/positions.cy.ts`: Add E2E tests for update workflow
 
 **Documentation Impact:**
-- `ai-specs/specs/api-spec.yml`: Add PATCH `/positions/{id}` endpoint specification
-- `ai-specs/specs/data-model.md`: Update Position model section with update operation details
+- `docs/api-spec.yml`: Add PATCH `/positions/{id}` endpoint specification
+- `docs/data-model.md`: Update Position model section with update operation details
 
 **No Breaking Changes**: This feature extends existing functionality without modifying current GET endpoints or data structures.

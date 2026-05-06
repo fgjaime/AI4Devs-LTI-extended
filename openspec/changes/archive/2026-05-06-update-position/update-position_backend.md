@@ -55,8 +55,8 @@ This plan ensures all requirements are met, tests are comprehensive, and documen
 - `backend/src/presentation/controllers/positionController.test.ts` - Controller tests
 
 **Documentation Files to Update**:
-- `ai-specs/specs/api-spec.yml` - API specification
-- `ai-specs/specs/data-model.md` - Data model documentation
+- `docs/api-spec.yml` - API specification
+- `docs/data-model.md` - Data model documentation
 
 ## 3. Implementation Steps
 
@@ -69,7 +69,7 @@ This plan ensures all requirements are met, tests are comprehensive, and documen
   2. Pull latest changes: `git pull origin [base-branch]`
   3. Create new branch: `git checkout -b feature/update-position-backend`
   4. Verify branch creation: `git branch`
-- **Notes**: This must be the FIRST step before any code changes. Refer to `openspec/config.yaml` and `ai-specs/specs/backend-standards.mdc` section "Development Workflow" for specific branch naming conventions and workflow rules.
+- **Notes**: This must be the FIRST step before any code changes. Refer to `openspec/config.yaml` and `docs/backend-standards.md` section "Development Workflow" for specific branch naming conventions and workflow rules.
 
 ### Step 1: Review and Verify Validator Implementation
 
@@ -469,11 +469,11 @@ Update `backend/src/presentation/controllers/positionController.test.ts`:
      - Route definition `PATCH /positions/:id`
   
   2. **Identify Documentation Files**: Determine which documentation files need updates based on:
-     - Data model changes → Update `ai-specs/specs/data-model.md`
-     - API endpoint changes → Update `ai-specs/specs/api-spec.yml`
-     - Standards/libraries/config changes → Update relevant `*-standards.mdc` files (if needed)
+     - Data model changes → Update `docs/data-model.md`
+     - API endpoint changes → Update `docs/api-spec.yml`
+     - Standards/libraries/config changes → Update relevant `*-standards.md` files (if needed)
   
-  3. **Update API Specification** (`ai-specs/specs/api-spec.yml`):
+  3. **Update API Specification** (`docs/api-spec.yml`):
      - Add or update `PATCH /positions/{id}` endpoint definition
      - Include complete request/response schemas
      - Document all possible error responses (400, 404, 500)
@@ -482,7 +482,7 @@ Update `backend/src/presentation/controllers/positionController.test.ts`:
      - Document immutable fields
      - Follow OpenAPI 3.0 specification format
   
-  4. **Update Data Model Documentation** (`ai-specs/specs/data-model.md`):
+  4. **Update Data Model Documentation** (`docs/data-model.md`):
      - Update Position model section with update operation details
      - Document immutable fields (`id`, `companyId`, `interviewFlowId`)
      - Document validation rules for updates
@@ -498,7 +498,7 @@ Update `backend/src/presentation/controllers/positionController.test.ts`:
   
   6. **Report Updates**: Document which files were updated and what changes were made
 - **References**: 
-  - Follow process described in `ai-specs/specs/documentation-standards.mdc`
+  - Follow process described in `docs/documentation-standards.md`
   - All documentation must be written in English
 - **Notes**: This step is MANDATORY before considering the implementation complete. Do not skip documentation updates.
 
@@ -772,8 +772,8 @@ Final verification checklist:
 - [ ] No breaking changes to existing functionality
 
 ### Documentation Updates Completed
-- [ ] API specification updated with PATCH endpoint (`ai-specs/specs/api-spec.yml`)
-- [ ] Data model documentation updated (`ai-specs/specs/data-model.md`)
+- [ ] API specification updated with PATCH endpoint (`docs/api-spec.yml`)
+- [ ] Data model documentation updated (`docs/data-model.md`)
 - [ ] All documentation written in English
 - [ ] Examples and error responses documented
 - [ ] Immutable fields documented

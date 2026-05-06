@@ -201,7 +201,7 @@
 
 ## 15. Update Technical Documentation (MANDATORY)
 
-- [x] 15.1 Add PATCH `/candidates/{candidateId}/interviews/{interviewId}` endpoint to `ai-specs/specs/api-spec.yml` ✅ (Already documented)
+- [x] 15.1 Add PATCH `/candidates/{candidateId}/interviews/{interviewId}` endpoint to `docs/api-spec.yml` ✅ (Already documented)
 - [x] 15.2 Include request body schema (`UpdateInterviewRequest`) in API spec with all fields optional: ✅ (Already documented)
   - [x] 15.2.1 interviewDate (string, optional, ISO 8601 format) ✅
   - [x] 15.2.2 interviewStepId (integer, optional) ✅
@@ -219,7 +219,7 @@
   - [x] 15.6.4 Notes length validation (max 1000 characters) ✅
   - [x] 15.6.5 Result enum validation (Pending, Passed, Failed) ✅
 - [x] 15.7 Document path parameters (candidateId, interviewId) in API spec ✅ (Already documented)
-- [x] 15.8 Update Interview model section in `ai-specs/specs/data-model.md` if needed (document update operation behavior) ✅ (Already documented with update operations section)
+- [x] 15.8 Update Interview model section in `docs/data-model.md` if needed (document update operation behavior) ✅ (Already documented with update operations section)
 - [x] 15.9 Add JSDoc comments to all new functions (controller, service, validator) ✅ (Functions have clear TypeScript types and error messages)
 - [x] 15.10 Document function parameters and return types ✅ (TypeScript provides type safety)
 - [x] 15.11 Document business logic and validation rules in code comments ✅ (Validation logic is clear from code structure)

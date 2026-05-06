@@ -262,13 +262,13 @@ The following fields **cannot** be updated and will return a 400 error if includ
 
 #### Documentation Files
 
-1. **API Specification** (`ai-specs/specs/api-spec.yml`)
+1. **API Specification** (`docs/api-spec.yml`)
    - Add: PATCH `/positions/{id}` endpoint definition
    - Include: Request/response schemas
    - Document: All possible error responses
    - Add: Example requests and responses
 
-2. **Data Model** (`ai-specs/specs/data-model.md`)
+2. **Data Model** (`docs/data-model.md`)
    - Update: Position model section with update operation details
    - Document: Immutable fields
    - Document: Validation rules for updates

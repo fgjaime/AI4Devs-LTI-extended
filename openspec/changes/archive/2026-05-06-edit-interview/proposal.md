@@ -37,7 +37,7 @@ Recruiters currently cannot modify interview details after creation, requiring m
 - UI/UX enhancements for edit functionality with modal interactions
 
 **Documentation Impact:**
-- `ai-specs/specs/api-spec.yml`: Add PATCH `/candidates/{candidateId}/interviews/{interviewId}` endpoint specification with request/response schemas, validation rules, and error responses
-- `ai-specs/specs/data-model.md`: Update Interview model section to document update operation behavior (if needed)
+- `docs/api-spec.yml`: Add PATCH `/candidates/{candidateId}/interviews/{interviewId}` endpoint specification with request/response schemas, validation rules, and error responses
+- `docs/data-model.md`: Update Interview model section to document update operation behavior (if needed)
 
 **No Breaking Changes**: This feature extends existing functionality without modifying current endpoints or data structures. The Interview domain model already exists and update operations follow the same validation rules as creation, with all fields optional for partial updates.

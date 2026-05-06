@@ -147,11 +147,11 @@ curl -X PATCH http://localhost:3010/positions/invalid -H "Content-Type: applicat
 
 ## 16. Update Technical Documentation (MANDATORY)
 
-- [x] 13.1 Add PATCH `/positions/{id}` endpoint to `ai-specs/specs/api-spec.yml`
+- [x] 13.1 Add PATCH `/positions/{id}` endpoint to `docs/api-spec.yml`
 - [x] 13.2 Include request/response schemas in API spec
 - [x] 13.3 Document all possible error responses (400, 404, 500) in API spec
 - [x] 13.4 Add example requests and responses to API spec
-- [x] 13.5 Update Position model section in `ai-specs/specs/data-model.md` with update operation details
+- [x] 13.5 Update Position model section in `docs/data-model.md` with update operation details
 - [x] 13.6 Document immutable fields in data model
 - [x] 13.7 Document validation rules for updates in data model
 

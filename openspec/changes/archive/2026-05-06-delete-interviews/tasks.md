@@ -181,13 +181,13 @@ curl -X DELETE http://localhost:3010/candidates/1/interviews/invalid -H "Content
 
 ## 15. Update Technical Documentation (MANDATORY)
 
-- [x] 15.1 Add DELETE `/candidates/{candidateId}/interviews/{interviewId}` endpoint to `ai-specs/specs/api-spec.yml`
+- [x] 15.1 Add DELETE `/candidates/{candidateId}/interviews/{interviewId}` endpoint to `docs/api-spec.yml`
 - [x] 15.2 Include request body schema with reason field (required, string, max 500 characters)
 - [x] 15.3 Document response schemas (200 success, 400 validation errors, 404 not found, 422 business rule violation, 500 server error)
 - [x] 15.4 Add example requests and responses to API spec
 - [x] 15.5 Document business rule: completed interviews cannot be deleted
 - [x] 15.6 Document validation rules: reason required, non-empty, max 500 characters
-- [x] 15.7 Update Interview model section in `ai-specs/specs/data-model.md` with deletion operation details (if applicable)
+- [x] 15.7 Update Interview model section in `docs/data-model.md` with deletion operation details (if applicable)
 - [x] 15.8 Document deletion audit trail requirements (logging)
 
 ## 16. Final Verification

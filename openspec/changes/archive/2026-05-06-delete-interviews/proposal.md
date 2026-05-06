@@ -44,5 +44,5 @@ Recruiters currently cannot delete or cancel interviews that are no longer neede
 - E2E tests for deletion UI flow
 
 **Documentation Impact:**
-- `ai-specs/specs/api-spec.yml`: Add DELETE endpoint documentation under `/candidates/{id}/interviews/{interviewId}` path
-- `ai-specs/specs/data-model.md`: Update Interview model documentation with deletion status fields (if added)
+- `docs/api-spec.yml`: Add DELETE endpoint documentation under `/candidates/{id}/interviews/{interviewId}` path
+- `docs/data-model.md`: Update Interview model documentation with deletion status fields (if added)
