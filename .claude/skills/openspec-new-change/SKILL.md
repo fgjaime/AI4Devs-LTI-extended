@@ -6,7 +6,7 @@ compatibility: Requires openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
-  generatedBy: "1.0.1"
+  generatedBy: "1.3.1"
 ---
 
 Start a new change using the experimental artifact-driven approach.
@@ -40,15 +40,6 @@ Start a new change using the experimental artifact-driven approach.
    ```
    Add `--schema <name>` only if the user requested a specific workflow.
    This creates a scaffolded change at `openspec/changes/<name>/` with the selected schema.
-
-3.5. **Handle attached files (if any)**
-   If the user has attached files to this conversation:
-   - Check for any files in the conversation context (attached files will be visible in the file list)
-   - For each attached file:
-     - Read the file to get its current path
-     - Move it to the root of the change directory: `openspec/changes/<name>/<filename>`
-     - Use the file system tools to copy/move the file, preserving the original filename
-   - If files were moved, inform the user: "Moved N attached file(s) to the change directory root."
 
 4. **Show the artifact status**
    ```bash

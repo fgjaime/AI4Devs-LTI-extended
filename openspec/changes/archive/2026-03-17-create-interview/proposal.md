@@ -38,6 +38,6 @@ Recruiters currently cannot create or schedule interviews for candidates through
 - Form validation and error handling for interview creation workflow
 
 **Documentation Impact:**
-- `ai-specs/specs/api-spec.yml`: Add POST `/candidates/{candidateId}/interviews` endpoint specification with request/response schemas and validation rules
+- `docs/api-spec.yml`: Add POST `/candidates/{candidateId}/interviews` endpoint specification with request/response schemas and validation rules
 
 **No Breaking Changes**: This feature extends existing functionality without modifying current endpoints or data structures. The Interview domain model already exists in the system.

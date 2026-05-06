@@ -101,7 +101,7 @@ The "Create Interview for Candidate" feature has been successfully implemented, 
 - `frontend/src/components/CandidateDetails.js` - Enhanced with interview creation and editing forms
 
 ### Documentation
-- `ai-specs/specs/api-spec.yml` - Updated with interview endpoints
+- `docs/api-spec.yml` - Updated with interview endpoints
 - `openspec/changes/create-interview/tasks.md` - Task tracking
 - `openspec/changes/create-interview/E2E_TEST_REPORT.md` - E2E test results
 
