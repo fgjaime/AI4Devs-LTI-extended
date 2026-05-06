@@ -123,7 +123,7 @@ AI4Devs-LTI/
 
 ## 🚀 Setup & Testing
 
-For detailed setup instructions, environment configuration, and testing guidelines, see the [Development Guide](ai-specs/specs/development_guide.md).
+For detailed setup instructions, environment configuration, and testing guidelines, see the [Development Guide](docs/development_guide.md).
 
 ## 📊 Database Schema
 
@@ -136,7 +136,7 @@ The system uses the following main entities:
 - **Interview Flows**: Configurable interview process stages
 - **Interviews**: Individual interview sessions and results
 
-For detailed schema information, entity relationships, and the complete data model documentation, see [`ai-specs/specs/data-model.md`](ai-specs/specs/data-model.md).
+For detailed schema information, entity relationships, and the complete data model documentation, see [`docs/data-model.md`](docs/data-model.md).
 
 ## 🔗 API Documentation
 
@@ -149,7 +149,7 @@ The REST API follows OpenAPI 3.0 specification. Key endpoints include:
 - `POST /positions` - Create new position
 - `PUT /candidates/{id}` - Update candidate interview stage
 
-Full API documentation is available in [`ai-specs/specs/api-spec.yml`](ai-specs/specs/api-spec.yml).
+Full API documentation is available in [`docs/api-spec.yml`](docs/api-spec.yml).
 
 ## 🤝 Contributing
 

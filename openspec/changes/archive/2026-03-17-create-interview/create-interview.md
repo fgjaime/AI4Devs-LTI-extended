@@ -195,7 +195,7 @@ Recruiters need to schedule and record interviews for candidates who have applie
    - Verify `save()` method handles creation correctly
    - Ensure constructor properly initializes all fields
 
-4. **`ai-specs/specs/api-spec.yml`**
+4. **`docs/api-spec.yml`**
    - Add endpoint specification for `POST /candidates/{candidateId}/interviews`
    - Add request body schema: `CreateInterviewRequest`
    - Add response schema: `InterviewResponse`
@@ -356,7 +356,7 @@ Recruiters need to schedule and record interviews for candidates who have applie
 
 ## Documentation Requirements
 
-1. **API Documentation** (`ai-specs/specs/api-spec.yml`):
+1. **API Documentation** (`docs/api-spec.yml`):
    - Complete endpoint specification
    - Request/response schemas
    - Error response examples

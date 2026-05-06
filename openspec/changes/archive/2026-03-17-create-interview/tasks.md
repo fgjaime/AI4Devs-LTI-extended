@@ -175,7 +175,7 @@
 
 ## 15. Update Technical Documentation (MANDATORY)
 
-- [x] 15.1 Add POST `/candidates/{candidateId}/interviews` endpoint to `ai-specs/specs/api-spec.yml`
+- [x] 15.1 Add POST `/candidates/{candidateId}/interviews` endpoint to `docs/api-spec.yml`
 - [x] 15.2 Include request body schema (`CreateInterviewRequest`) in API spec with all fields:
   - [x] 15.2.1 applicationId (integer, required)
   - [x] 15.2.2 interviewStepId (integer, required)
@@ -191,7 +191,7 @@
   - [x] 15.6.2 Business rule validation (candidate exists, application belongs to candidate, etc.)
   - [x] 15.6.3 Score range validation (0-5)
   - [x] 15.6.4 Notes length validation (max 1000 characters)
-- [x] 15.7 Update Interview model section in `ai-specs/specs/data-model.md` if needed
+- [x] 15.7 Update Interview model section in `docs/data-model.md` if needed
 - [x] 15.8 Add JSDoc comments to all new functions (controller, service, validator)
 - [x] 15.9 Document function parameters and return types
 - [x] 15.10 Document business logic and validation rules in code comments
