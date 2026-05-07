@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Alert, Card } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { positionService } from '../services/positionService';
+
+const VALID_STATUSES = ['Draft', 'Open', 'Closed', 'Hired'];
 
 const EditPositionForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [error, setError] = useState(null);
@@ -34,12 +38,11 @@ const EditPositionForm = () => {
             try {
                 setFetching(true);
                 const position = await positionService.getPositionById(parseInt(id));
-                
-                // Format applicationDeadline for input
+
                 let formattedDeadline = '';
                 if (position.applicationDeadline) {
                     const date = new Date(position.applicationDeadline);
-                    formattedDeadline = date.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:mm
+                    formattedDeadline = date.toISOString().slice(0, 16);
                 }
 
                 setFormData({
@@ -61,7 +64,7 @@ const EditPositionForm = () => {
                 });
             } catch (error) {
                 console.error('Error fetching position:', error);
-                setError('Error loading position data. Please try again.');
+                setError(t('positions.edit.loadError'));
             } finally {
                 setFetching(false);
             }
@@ -70,54 +73,53 @@ const EditPositionForm = () => {
         if (id) {
             fetchPosition();
         }
-    }, [id]);
+    }, [id, t]);
 
     const validateForm = () => {
         const errors = {};
 
         if (!formData.title || formData.title.trim() === '') {
-            errors.title = 'Title is required';
+            errors.title = t('validation.title.required');
         } else if (formData.title.length > 100) {
-            errors.title = 'Title must not exceed 100 characters';
+            errors.title = t('validation.title.tooLong');
         }
 
         if (!formData.description || formData.description.trim() === '') {
-            errors.description = 'Description is required';
+            errors.description = t('validation.description.required');
         }
 
         if (!formData.location || formData.location.trim() === '') {
-            errors.location = 'Location is required';
+            errors.location = t('validation.location.required');
         }
 
         if (!formData.jobDescription || formData.jobDescription.trim() === '') {
-            errors.jobDescription = 'Job description is required';
+            errors.jobDescription = t('validation.jobDescription.required');
         }
 
-        const validStatuses = ['Draft', 'Open', 'Contratado', 'Cerrado', 'Borrador'];
-        if (formData.status && !validStatuses.includes(formData.status)) {
-            errors.status = 'Invalid status value';
+        if (formData.status && !VALID_STATUSES.includes(formData.status)) {
+            errors.status = t('validation.status.invalid');
         }
 
         if (formData.salaryMin !== '' && (isNaN(formData.salaryMin) || parseFloat(formData.salaryMin) < 0)) {
-            errors.salaryMin = 'Salary minimum must be a number >= 0';
+            errors.salaryMin = t('validation.salaryMin.invalid');
         }
 
         if (formData.salaryMax !== '' && (isNaN(formData.salaryMax) || parseFloat(formData.salaryMax) < 0)) {
-            errors.salaryMax = 'Salary maximum must be a number >= 0';
+            errors.salaryMax = t('validation.salaryMax.invalid');
         }
 
         if (formData.salaryMin !== '' && formData.salaryMax !== '') {
             const min = parseFloat(formData.salaryMin);
             const max = parseFloat(formData.salaryMax);
             if (max < min) {
-                errors.salaryMax = 'Salary maximum must be >= salary minimum';
+                errors.salaryMax = t('validation.salaryMax.ltMin');
             }
         }
 
         if (formData.applicationDeadline) {
             const deadline = new Date(formData.applicationDeadline);
             if (isNaN(deadline.getTime())) {
-                errors.applicationDeadline = 'Invalid date format';
+                errors.applicationDeadline = t('validation.applicationDeadline.invalid');
             }
         }
 
@@ -131,8 +133,7 @@ const EditPositionForm = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
-        
-        // Clear validation error for this field
+
         if (validationErrors[name]) {
             setValidationErrors(prev => {
                 const newErrors = { ...prev };
@@ -154,9 +155,8 @@ const EditPositionForm = () => {
         try {
             setLoading(true);
 
-            // Prepare update data (only include fields that have values or are being changed)
             const updateData = {};
-            
+
             if (formData.title) updateData.title = formData.title;
             if (formData.description) updateData.description = formData.description;
             if (formData.status) updateData.status = formData.status;
@@ -171,17 +171,15 @@ const EditPositionForm = () => {
             if (formData.benefits) updateData.benefits = formData.benefits;
             if (formData.companyDescription) updateData.companyDescription = formData.companyDescription;
             if (formData.applicationDeadline) {
-                // Convert to ISO 8601 format
                 const date = new Date(formData.applicationDeadline);
                 updateData.applicationDeadline = date.toISOString();
             }
             if (formData.contactInfo) updateData.contactInfo = formData.contactInfo;
 
             await positionService.updatePosition(parseInt(id), updateData);
-            
+
             setSuccess(true);
-            
-            // Navigate back to positions list after 1.5 seconds
+
             setTimeout(() => {
                 navigate('/positions');
             }, 1500);
@@ -196,7 +194,7 @@ const EditPositionForm = () => {
     if (fetching) {
         return (
             <Container className="mt-5">
-                <div>Loading position data...</div>
+                <div>{t('positions.edit.loadingData')}</div>
             </Container>
         );
     }
@@ -204,16 +202,16 @@ const EditPositionForm = () => {
     return (
         <Container className="mt-5">
             <Button variant="link" onClick={() => navigate('/positions')} className="mb-3">
-                ← Back to Positions
+                {t('positions.edit.backToPositions')}
             </Button>
             <Card>
                 <Card.Header>
-                    <h2>Edit Position</h2>
+                    <h2>{t('positions.edit.title')}</h2>
                 </Card.Header>
                 <Card.Body>
                     {success && (
                         <Alert variant="success">
-                            Position updated successfully! Redirecting to positions list...
+                            {t('positions.edit.success')}
                         </Alert>
                     )}
                     {error && (
@@ -223,7 +221,7 @@ const EditPositionForm = () => {
                     )}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Title *</Form.Label>
+                            <Form.Label>{t('positions.edit.form.title')}</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="title"
@@ -238,7 +236,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Description *</Form.Label>
+                            <Form.Label>{t('positions.edit.form.description')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
@@ -253,18 +251,17 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Status *</Form.Label>
+                            <Form.Label>{t('positions.edit.form.status')}</Form.Label>
                             <Form.Select
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
                                 isInvalid={!!validationErrors.status}
                             >
-                                <option value="Draft">Draft</option>
-                                <option value="Open">Open</option>
-                                <option value="Contratado">Contratado</option>
-                                <option value="Cerrado">Cerrado</option>
-                                <option value="Borrador">Borrador</option>
+                                <option value="Draft">{t('status.draft')}</option>
+                                <option value="Open">{t('status.open')}</option>
+                                <option value="Closed">{t('status.closed')}</option>
+                                <option value="Hired">{t('status.hired')}</option>
                             </Form.Select>
                             <Form.Control.Feedback type="invalid">
                                 {validationErrors.status}
@@ -275,14 +272,14 @@ const EditPositionForm = () => {
                             <Form.Check
                                 type="checkbox"
                                 name="isVisible"
-                                label="Visible"
+                                label={t('common.visible')}
                                 checked={formData.isVisible}
                                 onChange={handleChange}
                             />
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Location *</Form.Label>
+                            <Form.Label>{t('positions.edit.form.location')}</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="location"
@@ -296,7 +293,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Job Description *</Form.Label>
+                            <Form.Label>{t('positions.edit.form.jobDescription')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={4}
@@ -311,7 +308,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Requirements</Form.Label>
+                            <Form.Label>{t('positions.edit.form.requirements')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
@@ -322,7 +319,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Responsibilities</Form.Label>
+                            <Form.Label>{t('positions.edit.form.responsibilities')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
@@ -333,7 +330,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Salary Minimum</Form.Label>
+                            <Form.Label>{t('positions.edit.form.salaryMin')}</Form.Label>
                             <Form.Control
                                 type="number"
                                 name="salaryMin"
@@ -348,7 +345,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Salary Maximum</Form.Label>
+                            <Form.Label>{t('positions.edit.form.salaryMax')}</Form.Label>
                             <Form.Control
                                 type="number"
                                 name="salaryMax"
@@ -363,7 +360,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Employment Type</Form.Label>
+                            <Form.Label>{t('positions.edit.form.employmentType')}</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="employmentType"
@@ -373,7 +370,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Benefits</Form.Label>
+                            <Form.Label>{t('positions.edit.form.benefits')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={2}
@@ -384,7 +381,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Company Description</Form.Label>
+                            <Form.Label>{t('positions.edit.form.companyDescription')}</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
@@ -395,7 +392,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Application Deadline</Form.Label>
+                            <Form.Label>{t('positions.edit.form.applicationDeadline')}</Form.Label>
                             <Form.Control
                                 type="datetime-local"
                                 name="applicationDeadline"
@@ -409,7 +406,7 @@ const EditPositionForm = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Contact Info</Form.Label>
+                            <Form.Label>{t('positions.edit.form.contactInfo')}</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="contactInfo"
@@ -420,10 +417,10 @@ const EditPositionForm = () => {
 
                         <div className="d-flex justify-content-between">
                             <Button variant="secondary" onClick={() => navigate('/positions')}>
-                                Cancel
+                                {t('positions.edit.form.cancel')}
                             </Button>
                             <Button variant="primary" type="submit" disabled={loading}>
-                                {loading ? 'Updating...' : 'Update Position'}
+                                {loading ? t('positions.edit.form.updating') : t('positions.edit.form.updatePosition')}
                             </Button>
                         </div>
                     </Form>

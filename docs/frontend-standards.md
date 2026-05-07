@@ -529,3 +529,58 @@ npm run cypress:run     # Run Cypress tests headlessly
 - **Responsive design** principles throughout
 
 This document serves as the foundation for maintaining code quality and consistency across the LTI frontend application. All team members should follow these practices to ensure a maintainable and scalable codebase.
+
+## Internationalization
+
+All user-visible strings MUST be resolved through the i18n layer. Hard-coded string literals in components are not permitted.
+
+### Setup
+
+The i18n layer lives in `frontend/src/i18n/`:
+
+```
+frontend/src/i18n/
+├── index.ts                  # i18next initialization (imported once in index.tsx)
+└── locales/
+    ├── en.json               # English (default locale + fallback)
+    └── es.json               # Spanish (must maintain 1:1 key parity with en.json)
+```
+
+Initialize once in `frontend/src/index.tsx` by importing `./i18n` before `<App />` renders.
+
+### Key naming convention
+
+Use dot notation grouped by feature: `feature.subSection.element`
+
+| Group | Purpose | Example |
+|---|---|---|
+| `common` | Shared labels | `common.cancel` |
+| `dashboard` | Recruiter Dashboard | `dashboard.title` |
+| `candidates` | Candidate form & details | `candidates.form.firstName` |
+| `positions` | Positions list & edit | `positions.edit.form.status` |
+| `interviews` | Interview create/edit/delete | `interviews.createButton` |
+| `fileUploader` | File upload widget | `fileUploader.upload` |
+| `validation` | Form validation messages | `validation.title.required` |
+| `errors` | Generic error messages | `errors.serverError` |
+| `status` | Position status labels | `status.open` |
+
+Keys must be English, lowercase, descriptive of role (not literal copy).
+
+### Usage in components
+
+```tsx
+import { useTranslation } from 'react-i18next';
+
+const MyComponent = () => {
+  const { t } = useTranslation();
+  return <h1>{t('dashboard.title')}</h1>;
+};
+```
+
+For interpolated values: `t('interviews.notes', { max: 1000 })`.
+
+### Rules
+
+- `console.error` / `console.warn` / `console.log` strings remain English literals — do NOT pass them through `t()`.
+- `aria-label` values that are user-visible MUST use `t()`.
+- Any new key added to `en.json` MUST have a matching entry in `es.json`. The parity test at `frontend/src/i18n/__tests__/locales.test.ts` enforces this automatically.

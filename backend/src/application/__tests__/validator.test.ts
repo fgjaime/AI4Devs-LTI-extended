@@ -496,25 +496,17 @@ describe('validatePositionUpdateData', () => {
             expect(() => validatePositionUpdateData(validData)).not.toThrow();
         });
 
-        it('should accept valid status value "Contratado"', () => {
+        it('should accept valid status value "Closed"', () => {
             const validData = {
-                status: 'Contratado'
+                status: 'Closed'
             };
 
             expect(() => validatePositionUpdateData(validData)).not.toThrow();
         });
 
-        it('should accept valid status value "Cerrado"', () => {
+        it('should accept valid status value "Hired"', () => {
             const validData = {
-                status: 'Cerrado'
-            };
-
-            expect(() => validatePositionUpdateData(validData)).not.toThrow();
-        });
-
-        it('should accept valid status value "Borrador"', () => {
-            const validData = {
-                status: 'Borrador'
+                status: 'Hired'
             };
 
             expect(() => validatePositionUpdateData(validData)).not.toThrow();
@@ -523,6 +515,30 @@ describe('validatePositionUpdateData', () => {
         it('should throw error when status is invalid enum value', () => {
             const invalidData = {
                 status: 'InvalidStatus'
+            };
+
+            expect(() => validatePositionUpdateData(invalidData)).toThrow();
+        });
+
+        it('should reject legacy Spanish status "Contratado"', () => {
+            const invalidData = {
+                status: 'Contratado'
+            };
+
+            expect(() => validatePositionUpdateData(invalidData)).toThrow();
+        });
+
+        it('should reject legacy Spanish status "Cerrado"', () => {
+            const invalidData = {
+                status: 'Cerrado'
+            };
+
+            expect(() => validatePositionUpdateData(invalidData)).toThrow();
+        });
+
+        it('should reject legacy Spanish status "Borrador"', () => {
+            const invalidData = {
+                status: 'Borrador'
             };
 
             expect(() => validatePositionUpdateData(invalidData)).toThrow();

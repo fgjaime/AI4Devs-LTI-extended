@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 type Position = {
@@ -8,10 +9,18 @@ type Position = {
     title: string;
     contactInfo: string;
     applicationDeadline: string;
-    status: 'Open' | 'Contratado' | 'Cerrado' | 'Borrador';
+    status: 'Draft' | 'Open' | 'Closed' | 'Hired';
+};
+
+const statusBadgeClass: Record<Position['status'], string> = {
+    Open: 'bg-warning',
+    Hired: 'bg-success',
+    Draft: 'bg-secondary',
+    Closed: 'bg-danger',
 };
 
 const Positions: React.FC = () => {
+    const { t } = useTranslation();
     const [positions, setPositions] = useState<Position[]>([]);
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +45,7 @@ const Positions: React.FC = () => {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
@@ -52,34 +61,34 @@ const Positions: React.FC = () => {
     return (
         <Container className="mt-5">
             <Button variant="link" onClick={() => navigate('/')} className="mb-3">
-                Volver al Dashboard
+                {t('positions.backToDashboard')}
             </Button>
-            <h2 className="text-center mb-4">Posiciones</h2>
+            <h2 className="text-center mb-4">{t('positions.title')}</h2>
             <Row className="mb-4">
                 <Col md={3}>
-                    <Form.Control 
-                        type="text" 
-                        placeholder="Buscar por título" 
+                    <Form.Control
+                        type="text"
+                        placeholder={t('positions.search.byTitle')}
                         value={searchTerm}
                         onChange={handleSearch}
-                        aria-label="Buscar posiciones por título"
+                        aria-label={t('positions.search.ariaLabel')}
                     />
                 </Col>
                 <Col md={3}>
-                    <Form.Control type="date" placeholder="Buscar por fecha" />
+                    <Form.Control type="date" placeholder={t('positions.search.byDate')} />
                 </Col>
                 <Col md={3}>
                     <Form.Control as="select">
-                        <option value="">Estado</option>
-                        <option value="open">Abierto</option>
-                        <option value="filled">Contratado</option>
-                        <option value="closed">Cerrado</option>
-                        <option value="draft">Borrador</option>
+                        <option value="">{t('positions.filter.status')}</option>
+                        <option value="Open">{t('status.open')}</option>
+                        <option value="Hired">{t('status.hired')}</option>
+                        <option value="Closed">{t('status.closed')}</option>
+                        <option value="Draft">{t('status.draft')}</option>
                     </Form.Control>
                 </Col>
                 <Col md={3}>
                     <Form.Control as="select">
-                        <option value="">Manager</option>
+                        <option value="">{t('positions.filter.manager')}</option>
                         <option value="john_doe">John Doe</option>
                         <option value="jane_smith">Jane Smith</option>
                         <option value="alex_jones">Alex Jones</option>
@@ -93,15 +102,15 @@ const Positions: React.FC = () => {
                             <Card.Body>
                                 <Card.Title>{position.title}</Card.Title>
                                 <Card.Text>
-                                    <strong>Manager:</strong> {position.contactInfo}<br />
-                                    <strong>Deadline:</strong> {position.applicationDeadline}
+                                    <strong>{t('positions.card.manager')}:</strong> {position.contactInfo}<br />
+                                    <strong>{t('positions.card.deadline')}:</strong> {position.applicationDeadline}
                                 </Card.Text>
-                                <span className={`badge ${position.status === 'Open' ? 'bg-warning' : position.status === 'Contratado' ? 'bg-success' : position.status === 'Borrador' ? 'bg-secondary' : 'bg-warning'} text-white`}>
-                                    {position.status}
+                                <span className={`badge ${statusBadgeClass[position.status] ?? 'bg-secondary'} text-white`}>
+                                    {t(`status.${position.status.toLowerCase()}`)}
                                 </span>
                                 <div className="d-flex justify-content-between mt-3">
-                                    <Button variant="outline-secondary" onClick={() => navigate(`/positions/${position.id}/edit`)} className="me-2">Editar</Button>
-                                    <Button variant="primary" onClick={() => navigate(`/positions/${position.id}`)}>Ver proceso</Button>
+                                    <Button variant="outline-secondary" onClick={() => navigate(`/positions/${position.id}/edit`)} className="me-2">{t('positions.card.edit')}</Button>
+                                    <Button variant="primary" onClick={() => navigate(`/positions/${position.id}`)}>{t('positions.card.viewProcess')}</Button>
                                 </div>
                             </Card.Body>
                         </Card>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert, InputGroup, FormControl, Card, Container, Row, Col } from 'react-bootstrap';
 import { Trash } from 'react-bootstrap-icons';
+import { useTranslation } from 'react-i18next';
 import FileUploader from './FileUploader';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const AddCandidateForm = () => {
+    const { t } = useTranslation();
     const [candidate, setCandidate] = useState({
         firstName: '',
         lastName: '',
@@ -36,7 +38,9 @@ const AddCandidateForm = () => {
     };
 
     const handleAddSection = (section) => {
-        const newSection = section === 'educations' ? { institution: '', title: '', startDate: '', endDate: '' } : { company: '', position: '', description: '', startDate: '', endDate: '' };
+        const newSection = section === 'educations'
+            ? { institution: '', title: '', startDate: '', endDate: '' }
+            : { company: '', position: '', description: '', startDate: '', endDate: '' };
         setCandidate({ ...candidate, [section]: [...candidate[section], newSection] });
     };
 
@@ -61,7 +65,6 @@ const AddCandidateForm = () => {
                 } : null
             };
 
-            // Format date fields to YYYY-MM-DD before sending to the endpoint
             candidateData.educations = candidateData.educations.map(education => ({
                 ...education,
                 startDate: education.startDate ? education.startDate.toISOString().slice(0, 10) : '',
@@ -75,38 +78,36 @@ const AddCandidateForm = () => {
 
             const res = await fetch('http://localhost:3010/candidates', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(candidateData)
             });
 
             if (res.status === 201) {
-                setSuccessMessage('Candidato añadido con éxito');
+                setSuccessMessage(t('candidates.form.success'));
                 setError('');
             } else if (res.status === 400) {
                 const errorData = await res.json();
-                throw new Error('Datos inválidos: ' + errorData.message);
+                throw new Error(t('candidates.form.errors.invalidData', { message: errorData.message }));
             } else if (res.status === 500) {
-                throw new Error('Error interno del servidor');
+                throw new Error(t('candidates.form.errors.serverError'));
             } else {
-                throw new Error('Error al enviar datos del candidato');
+                throw new Error(t('candidates.form.errors.sendError'));
             }
         } catch (error) {
-            setError('Error al añadir candidato: ' + error.message);
+            setError(t('candidates.form.errors.addError', { message: error.message }));
             setSuccessMessage('');
         }
     };
 
     return (
         <Container className="mt-5">
-            <h1 className="mb-4">Agregar Candidato</h1>
+            <h1 className="mb-4">{t('candidates.form.title')}</h1>
             <Card className="shadow p-4">
                 <Form onSubmit={handleSubmit}>
                     <Row>
                         <Col md={6}>
                             <Form.Group controlId="firstName">
-                                <Form.Label>Nombre</Form.Label>
+                                <Form.Label>{t('candidates.form.firstName')}</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="firstName"
@@ -116,7 +117,7 @@ const AddCandidateForm = () => {
                                 />
                             </Form.Group>
                             <Form.Group controlId="lastName">
-                                <Form.Label>Apellido</Form.Label>
+                                <Form.Label>{t('candidates.form.lastName')}</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="lastName"
@@ -126,7 +127,7 @@ const AddCandidateForm = () => {
                                 />
                             </Form.Group>
                             <Form.Group controlId="email">
-                                <Form.Label>Correo Electrónico</Form.Label>
+                                <Form.Label>{t('candidates.form.email')}</Form.Label>
                                 <Form.Control
                                     type="email"
                                     name="email"
@@ -136,7 +137,7 @@ const AddCandidateForm = () => {
                                 />
                             </Form.Group>
                             <Form.Group controlId="phone">
-                                <Form.Label>Teléfono</Form.Label>
+                                <Form.Label>{t('candidates.form.phone')}</Form.Label>
                                 <Form.Control
                                     type="tel"
                                     name="phone"
@@ -145,7 +146,7 @@ const AddCandidateForm = () => {
                                 />
                             </Form.Group>
                             <Form.Group controlId="address">
-                                <Form.Label>Dirección</Form.Label>
+                                <Form.Label>{t('candidates.form.address')}</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="address"
@@ -156,7 +157,7 @@ const AddCandidateForm = () => {
                         </Col>
                         <Col md={6}>
                             <Form.Group controlId="cv">
-                                <Form.Label>CV</Form.Label>
+                                <Form.Label>{t('candidates.form.cv')}</Form.Label>
                                 <FileUploader
                                     onChange={handleCVUpload}
                                     onUpload={handleCVUpload}
@@ -164,14 +165,14 @@ const AddCandidateForm = () => {
                                 />
                             </Form.Group>
                             <Row className="mt-4">
-                                <Button onClick={() => handleAddSection('educations')} className="btn btn-primary btn-sm mr-2">Añadir Educación</Button>
+                                <Button onClick={() => handleAddSection('educations')} className="btn btn-primary btn-sm mr-2">{t('candidates.form.addEducation')}</Button>
                             </Row>
                             {candidate.educations.map((education, index) => (
                                 <div key={index} className="mb-3">
                                     <Row className="mt-4">
                                         <Col md={6}>
                                             <FormControl
-                                                placeholder="Institución"
+                                                placeholder={t('candidates.form.institution')}
                                                 name="institution"
                                                 value={education.institution}
                                                 onChange={(e) => handleInputChange(e, index, 'educations')}
@@ -182,7 +183,7 @@ const AddCandidateForm = () => {
                                     <Row className="mt-2">
                                         <Col md={6}>
                                             <FormControl
-                                                placeholder="Título"
+                                                placeholder={t('candidates.form.degree')}
                                                 name="title"
                                                 value={education.title}
                                                 onChange={(e) => handleInputChange(e, index, 'educations')}
@@ -196,7 +197,7 @@ const AddCandidateForm = () => {
                                                 selected={education.startDate}
                                                 onChange={(date) => handleDateChange(date, index, 'educations', 'startDate')}
                                                 dateFormat="yyyy-MM-dd"
-                                                placeholderText="Fecha de Inicio"
+                                                placeholderText={t('candidates.form.startDate')}
                                                 className="form-control shadow-sm"
                                             />
                                         </Col>
@@ -205,25 +206,25 @@ const AddCandidateForm = () => {
                                                 selected={education.endDate}
                                                 onChange={(date) => handleDateChange(date, index, 'educations', 'endDate')}
                                                 dateFormat="yyyy-MM-dd"
-                                                placeholderText="Fecha de Fin"
+                                                placeholderText={t('candidates.form.endDate')}
                                                 className="form-control shadow-sm"
                                             />
                                         </Col>
                                     </Row>
                                     <Button variant="danger" onClick={() => handleRemoveSection(index, 'educations')} className="mt-2">
-                                        <Trash /> Eliminar
+                                        <Trash /> {t('candidates.form.remove')}
                                     </Button>
                                 </div>
                             ))}
                             <Row className="mt-4">
-                                <Button onClick={() => handleAddSection('workExperiences')} className="btn btn-primary btn-sm mr-2">Añadir Experiencia Laboral</Button>
+                                <Button onClick={() => handleAddSection('workExperiences')} className="btn btn-primary btn-sm mr-2">{t('candidates.form.addWorkExperience')}</Button>
                             </Row>
                             {candidate.workExperiences.map((experience, index) => (
                                 <div key={index} className="mb-3">
                                     <Row className="mt-4">
                                         <Col md={6}>
                                             <FormControl
-                                                placeholder="Empresa"
+                                                placeholder={t('candidates.form.company')}
                                                 name="company"
                                                 value={experience.company}
                                                 onChange={(e) => handleInputChange(e, index, 'workExperiences')}
@@ -234,7 +235,7 @@ const AddCandidateForm = () => {
                                     <Row className="mt-2">
                                         <Col md={6}>
                                             <FormControl
-                                                placeholder="Puesto"
+                                                placeholder={t('candidates.form.positionField')}
                                                 name="position"
                                                 value={experience.position}
                                                 onChange={(e) => handleInputChange(e, index, 'workExperiences')}
@@ -248,7 +249,7 @@ const AddCandidateForm = () => {
                                                 selected={experience.startDate}
                                                 onChange={(date) => handleDateChange(date, index, 'workExperiences', 'startDate')}
                                                 dateFormat="yyyy-MM-dd"
-                                                placeholderText="Fecha de Inicio"
+                                                placeholderText={t('candidates.form.startDate')}
                                                 className="form-control shadow-sm"
                                             />
                                         </Col>
@@ -257,19 +258,19 @@ const AddCandidateForm = () => {
                                                 selected={experience.endDate}
                                                 onChange={(date) => handleDateChange(date, index, 'workExperiences', 'endDate')}
                                                 dateFormat="yyyy-MM-dd"
-                                                placeholderText="Fecha de Fin"
+                                                placeholderText={t('candidates.form.endDate')}
                                                 className="form-control shadow-sm"
                                             />
                                         </Col>
                                     </Row>
                                     <Button variant="danger" onClick={() => handleRemoveSection(index, 'workExperiences')} className="mt-2">
-                                        <Trash /> Eliminar
+                                        <Trash /> {t('candidates.form.remove')}
                                     </Button>
                                 </div>
                             ))}
                         </Col>
                     </Row>
-                    <Button type="submit" className="btn btn-primary btn-block shadow-sm mt-5">Enviar</Button>
+                    <Button type="submit" className="btn btn-primary btn-block shadow-sm mt-5">{t('candidates.form.submit')}</Button>
                     {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
                     {successMessage && <Alert variant="success" className="mt-3">{successMessage}</Alert>}
                 </Form>

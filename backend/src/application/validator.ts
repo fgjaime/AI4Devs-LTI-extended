@@ -147,7 +147,7 @@ export const validateInterviewData = (_candidateId: number, data: any): void => 
     }
 };
 
-const POSITION_STATUS_VALUES = ['Draft', 'Open', 'Contratado', 'Cerrado', 'Borrador'];
+const POSITION_STATUS_VALUES = ['Draft', 'Open', 'Closed', 'Hired'];
 
 export const validatePositionUpdateData = (data: any): void => {
     if (data.id !== undefined) throw new Error('id cannot be updated');
