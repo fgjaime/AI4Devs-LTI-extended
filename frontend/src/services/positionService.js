@@ -2,12 +2,25 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:3010';
 
+const LEGACY_STATUS_MAP = {
+  Contratado: 'Hired',
+  Cerrado: 'Closed',
+  Borrador: 'Draft',
+};
+
+const normalizeStatus = (status) => LEGACY_STATUS_MAP[status] ?? status;
+
+const normalizePosition = (pos) => ({
+  ...pos,
+  status: normalizeStatus(pos.status),
+});
+
 export const positionService = {
   // Get all positions
   getAllPositions: async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/positions`);
-      return response.data;
+      return response.data.map(normalizePosition);
     } catch (error) {
       console.error('Error fetching positions:', error);
       throw error;
@@ -18,7 +31,7 @@ export const positionService = {
   getPositionById: async (id) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/positions/${id}`);
-      return response.data;
+      return normalizePosition(response.data);
     } catch (error) {
       console.error('Error fetching position:', error);
       throw error;

@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "visible": "Visible",
+    "ratingLabel": "rating"
+  },
+  "dashboard": {
+    "title": "Recruiter Dashboard",
+    "logoAlt": "LTI Logo",
+    "candidates": {
+      "title": "Add Candidate",
+      "button": "Add New Candidate"
+    },
+    "positions": {
+      "title": "View Positions",
+      "button": "Go to Positions"
+    }
+  },
+  "candidates": {
+    "form": {
+      "title": "Add Candidate",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "cv": "CV",
+      "addEducation": "Add Education",
+      "institution": "Institution",
+      "degree": "Degree",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "remove": "Remove",
+      "addWorkExperience": "Add Work Experience",
+      "company": "Company",
+      "positionField": "Position",
+      "submit": "Submit",
+      "success": "Candidate added successfully",
+      "errors": {
+        "invalidData": "Invalid data: {{message}}",
+        "serverError": "Internal server error",
+        "sendError": "Error sending candidate data",
+        "addError": "Error adding candidate: {{message}}"
+      }
+    },
+    "details": {
+      "title": "Candidate details",
+      "loading": "Loading...",
+      "email": "Email:",
+      "phone": "Phone:",
+      "address": "Address:",
+      "education": "Education",
+      "noEducation": "No education listed",
+      "workExperience": "Work experience",
+      "noWorkExperience": "No work experience listed",
+      "resumes": "Resumes",
+      "noResumes": "No resumes",
+      "downloadResume": "Download resume",
+      "applications": "Applications",
+      "noApplications": "No applications",
+      "position": "Position:",
+      "applicationDate": "Application date:",
+      "interviews": "Interviews",
+      "noInterviews": "No interviews yet",
+      "noApplicationsCreate": "This candidate has no applications. Create an interview from a position view.",
+      "createInterview": "Create new interview",
+      "failedToLoad": "Failed to load candidate details"
+    }
+  },
+  "positions": {
+    "backToDashboard": "Back to Dashboard",
+    "title": "Positions",
+    "backToPositions": "Back to Positions",
+    "search": {
+      "byTitle": "Search by title",
+      "byDate": "Search by date",
+      "ariaLabel": "Search positions by title"
+    },
+    "filter": {
+      "status": "Status",
+      "manager": "Manager"
+    },
+    "card": {
+      "manager": "Manager",
+      "deadline": "Deadline",
+      "edit": "Edit",
+      "viewProcess": "View process"
+    },
+    "edit": {
+      "title": "Edit Position",
+      "backToPositions": "← Back to Positions",
+      "success": "Position updated successfully! Redirecting to positions list...",
+      "loadingData": "Loading position data...",
+      "loadError": "Error loading position data. Please try again.",
+      "form": {
+        "title": "Title *",
+        "description": "Description *",
+        "status": "Status *",
+        "location": "Location *",
+        "jobDescription": "Job Description *",
+        "requirements": "Requirements",
+        "responsibilities": "Responsibilities",
+        "salaryMin": "Salary Minimum",
+        "salaryMax": "Salary Maximum",
+        "employmentType": "Employment Type",
+        "benefits": "Benefits",
+        "companyDescription": "Company Description",
+        "applicationDeadline": "Application Deadline",
+        "contactInfo": "Contact Info",
+        "updating": "Updating...",
+        "updatePosition": "Update Position",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "interviews": {
+    "application": "Application",
+    "selectApplication": "Select an application",
+    "dateTime": "Interview date and time",
+    "step": "Interview step",
+    "selectStep": "Select a step",
+    "employee": "Employee",
+    "selectEmployee": "Select an employee",
+    "result": "Result",
+    "score": "Score (0-5, optional)",
+    "scoreLabel": "Score {{star}}",
+    "notes": "Notes (max {{max}} characters)",
+    "creating": "Creating...",
+    "createButton": "Create interview",
+    "editTitle": "Edit Interview",
+    "deleteTitle": "Delete interview",
+    "deleteWarning": "This will permanently remove the interview. Please provide a reason for the deletion (required).",
+    "deleteReason": "Deletion reason",
+    "deleteReasonPlaceholder": "e.g. Interview cancelled by candidate",
+    "deleteReasonTooLong": "Reason must not exceed {{max}} characters",
+    "confirmDelete": "Delete",
+    "deleting": "Deleting...",
+    "saving": "Saving...",
+    "save": "Save",
+    "delete": "Delete",
+    "dateLabel": "Date:",
+    "stepLabel": "Step:",
+    "scoreDisplay": "Score:",
+    "notesLabel": "Notes:",
+    "failedToLoad": "Failed to load candidate details",
+    "failedToCreate": "Failed to create interview",
+    "failedToUpdate": "Failed to update interview",
+    "failedToDelete": "Failed to delete interview",
+    "createSuccess": "Interview created successfully!",
+    "updateSuccess": "Interview updated successfully!",
+    "deleteSuccess": "Interview deleted successfully.",
+    "editInterview": "Edit interview",
+    "deleteInterview": "Delete interview"
+  },
+  "fileUploader": {
+    "upload": "Upload File",
+    "selectedFile": "Selected file:",
+    "uploadSuccess": "File uploaded successfully",
+    "uploadError": "Error uploading file"
+  },
+  "validation": {
+    "title": {
+      "required": "Title is required",
+      "tooLong": "Title must not exceed 100 characters"
+    },
+    "description": {
+      "required": "Description is required"
+    },
+    "location": {
+      "required": "Location is required"
+    },
+    "jobDescription": {
+      "required": "Job description is required"
+    },
+    "status": {
+      "invalid": "Invalid status value"
+    },
+    "salaryMin": {
+      "invalid": "Salary minimum must be a number >= 0"
+    },
+    "salaryMax": {
+      "invalid": "Salary maximum must be a number >= 0",
+      "ltMin": "Salary maximum must be >= salary minimum"
+    },
+    "applicationDeadline": {
+      "invalid": "Invalid date format"
+    },
+    "application": {
+      "required": "Application is required"
+    },
+    "interviewStep": {
+      "required": "Interview step is required"
+    },
+    "employee": {
+      "required": "Employee is required"
+    },
+    "interviewDate": {
+      "required": "Interview date is required"
+    },
+    "notes": {
+      "tooLong": "Notes must not exceed {{max}} characters"
+    },
+    "reason": {
+      "tooLong": "Reason must not exceed {{max}} characters"
+    }
+  },
+  "errors": {
+    "invalidData": "Invalid data: {{message}}",
+    "serverError": "Internal server error",
+    "sendError": "Error sending candidate data",
+    "addError": "Error adding candidate: {{message}}"
+  },
+  "status": {
+    "draft": "Draft",
+    "open": "Open",
+    "closed": "Closed",
+    "hired": "Hired"
+  }
+}

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Offcanvas, Button } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import StageColumn from './StageColumn';
 import CandidateDetails from './CandidateDetails';
 import { useNavigate } from 'react-router-dom';
 
 const PositionsDetails = () => {
     const { id } = useParams();
+    const { t } = useTranslation();
     const [stages, setStages] = useState([]);
     const [positionName, setPositionName] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -129,7 +131,7 @@ const PositionsDetails = () => {
     return (
         <Container className="mt-5">
             <Button variant="link" onClick={() => navigate('/positions')} className="mb-3">
-                Volver a Posiciones
+                {t('positions.backToPositions')}
             </Button>
             <h2 className="text-center mb-4">{positionName}</h2>
             <DragDropContext onDragEnd={onDragEnd}>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Button, InputGroup, FormControl, Spinner } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const FileUploader = ({ onChange, onUpload }) => {
+  const { t } = useTranslation();
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [fileData, setFileData] = useState(null);
@@ -26,16 +28,16 @@ const FileUploader = ({ onChange, onUpload }) => {
         });
 
         if (!res.ok) {
-          throw new Error('Error al subir archivo');
+          throw new Error('Upload request failed');
         }
 
-        const fileData = await res.json();
-        setFileData(fileData);
-        onUpload(fileData);
+        const data = await res.json();
+        setFileData(data);
+        onUpload(data);
       } catch (error) {
-        console.error('Error al subir archivo:', error);
+        console.error('Error uploading file:', error);
       } finally {
-        setLoading(false); // Asegura que loading se establezca a false después de la operación
+        setLoading(false);
       }
     }
   };
@@ -53,14 +55,14 @@ const FileUploader = ({ onChange, onUpload }) => {
           {loading ? (
             <Spinner animation="border" role="status" size="sm" />
           ) : (
-            'Subir Archivo'
+            t('fileUploader.upload')
           )}
         </Button>
       </InputGroup>
-      <p className="mb-0">Selected file: {fileName}</p>
+      <p className="mb-0">{t('fileUploader.selectedFile')} {fileName}</p>
       {fileData && (
         <p className="mt-2">
-          Archivo subido con éxito
+          {t('fileUploader.uploadSuccess')}
         </p>
       )}
     </div>

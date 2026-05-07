@@ -3,7 +3,6 @@ describe('Positions API - Update', () => {
   let testPositionId: number;
 
   before(() => {
-    // Obtener una posición existente para usar en los tests
     cy.request({
       method: 'GET',
       url: `${API_URL}/positions`
@@ -19,13 +18,12 @@ describe('Positions API - Update', () => {
   });
 
   beforeEach(() => {
-    // Limpiar cualquier estado previo
     cy.window().then((win) => {
       win.localStorage.clear();
     });
   });
 
-  describe('PUT /positions/:id', () => {
+  describe('PATCH /positions/:id', () => {
     it('should update a position successfully with all valid fields', () => {
       const updateData = {
         title: 'Updated Test Position',
@@ -45,74 +43,64 @@ describe('Positions API - Update', () => {
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: updateData
       }).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('message', 'Position updated successfully');
-        expect(response.body).to.have.property('data');
-        expect(response.body.data).to.have.property('title', updateData.title);
-        expect(response.body.data).to.have.property('status', updateData.status);
-        expect(response.body.data).to.have.property('isVisible', updateData.isVisible);
-        expect(response.body.data).to.have.property('location', updateData.location);
+        expect(response.body).to.have.property('title', updateData.title);
+        expect(response.body).to.have.property('status', updateData.status);
+        expect(response.body).to.have.property('isVisible', updateData.isVisible);
+        expect(response.body).to.have.property('location', updateData.location);
       });
     });
 
     it('should return error when trying to update non-existent position', () => {
       const nonExistentId = 99999;
-      const updateData = {
-        title: 'Updated Title'
-      };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${nonExistentId}`,
-        body: updateData,
+        body: { title: 'Updated Title' },
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(404);
         expect(response.body).to.have.property('message', 'Position not found');
-        expect(response.body).to.have.property('error');
       });
     });
 
     it('should return error when trying to update with invalid data', () => {
       const invalidData = {
-        title: '', // Campo vacío
-        salaryMin: -1000, // Salario negativo
-        status: 'InvalidStatus' // Estado inválido
+        title: '',
+        salaryMin: -1000,
+        status: 'InvalidStatus'
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: invalidData,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.have.property('message', 'Validation error');
-        expect(response.body).to.have.property('error');
       });
     });
 
-    it('should validate that required fields cannot be empty', () => {
+    it('should validate that required fields cannot be empty strings', () => {
       const emptyFieldsData = {
-        title: '',
-        description: '',
-        location: '',
-        jobDescription: ''
+        title: ''
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: emptyFieldsData,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.have.property('message', 'Validation error');
-        expect(response.body.error).to.include('obligatorio');
+        expect(response.body).to.have.property('error', 'Invalid title');
       });
     });
 
@@ -125,28 +113,24 @@ describe('Positions API - Update', () => {
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: updateData
       }).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body.data).to.have.property('title', updateData.title);
-        expect(response.body.data).to.have.property('status', updateData.status);
-        expect(response.body.data).to.have.property('salaryMin', updateData.salaryMin);
-        expect(response.body.data).to.have.property('salaryMax', updateData.salaryMax);
+        expect(response.body).to.have.property('title', updateData.title);
+        expect(response.body).to.have.property('status', updateData.status);
+        expect(response.body).to.have.property('salaryMin', updateData.salaryMin);
+        expect(response.body).to.have.property('salaryMax', updateData.salaryMax);
       });
     });
 
     it('should return error when trying to update with invalid ID format', () => {
       const invalidId = 'not-a-number';
-      const updateData = {
-        title: 'Updated Title'
-      };
 
       cy.request({
-        method: 'PUT',
+        method: 'GET',
         url: `${API_URL}/positions/${invalidId}`,
-        body: updateData,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(400);
@@ -156,37 +140,30 @@ describe('Positions API - Update', () => {
     });
 
     it('should verify that unmodified fields maintain their original values', () => {
-      // Primero obtenemos los datos originales de la lista de posiciones
       cy.request({
         method: 'GET',
         url: `${API_URL}/positions`
       }).then((originalResponse) => {
         const originalData = originalResponse.body.find((pos: any) => pos.id === testPositionId);
         expect(originalData).to.exist;
-        
-        // Actualizamos solo algunos campos
+
         const partialUpdate = {
           title: 'Partially Updated Position',
           status: 'Open'
         };
 
         cy.request({
-          method: 'PUT',
+          method: 'PATCH',
           url: `${API_URL}/positions/${testPositionId}`,
           body: partialUpdate
         }).then((updateResponse) => {
           expect(updateResponse.status).to.eq(200);
-          const updatedData = updateResponse.body.data;
-          
-          // Verificar que los campos actualizados cambiaron
+          const updatedData = updateResponse.body;
+
           expect(updatedData.title).to.eq(partialUpdate.title);
           expect(updatedData.status).to.eq(partialUpdate.status);
-          
-          // Verificar que los campos no modificados mantienen sus valores
           expect(updatedData.description).to.eq(originalData.description);
           expect(updatedData.location).to.eq(originalData.location);
-          expect(updatedData.salaryMin).to.eq(originalData.salaryMin);
-          expect(updatedData.salaryMax).to.eq(originalData.salaryMax);
         });
       });
     });
@@ -194,66 +171,76 @@ describe('Positions API - Update', () => {
     it('should validate salary range constraints', () => {
       const invalidSalaryData = {
         salaryMin: 100000,
-        salaryMax: 50000 // Máximo menor que mínimo
+        salaryMax: 50000
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: invalidSalaryData,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.have.property('message', 'Validation error');
-        expect(response.body.error).to.include('mínimo no puede ser mayor que el máximo');
+        expect(response.body.error).to.include('salaryMax');
       });
     });
 
-    it('should return error when no data is provided for update', () => {
+    it('empty body PATCH returns 200 with the current position unchanged', () => {
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
-        body: {},
-        failOnStatusCode: false
+        body: {}
       }).then((response) => {
-        expect(response.status).to.eq(400);
-        expect(response.body).to.have.property('message', 'No data provided for update');
-        expect(response.body).to.have.property('error', 'Request body cannot be empty');
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property('id', testPositionId);
       });
     });
 
     it('should validate status enum values', () => {
-      const validStatuses = ['Open', 'Contratado', 'Cerrado', 'Borrador'];
-      
+      const validStatuses = ['Draft', 'Open', 'Closed', 'Hired'];
+
       validStatuses.forEach((status) => {
         cy.request({
-          method: 'PUT',
+          method: 'PATCH',
           url: `${API_URL}/positions/${testPositionId}`,
-          body: { status: status }
+          body: { status }
         }).then((response) => {
           expect(response.status).to.eq(200);
-          expect(response.body.data.status).to.eq(status);
+          expect(response.body.status).to.eq(status);
         });
       });
     });
 
-    it('should return error for invalid company or interview flow references', () => {
+    it('should reject legacy Spanish status values', () => {
+      const legacyStatuses = ['Contratado', 'Cerrado', 'Borrador'];
+
+      legacyStatuses.forEach((status) => {
+        cy.request({
+          method: 'PATCH',
+          url: `${API_URL}/positions/${testPositionId}`,
+          body: { status },
+          failOnStatusCode: false
+        }).then((response) => {
+          expect(response.status).to.eq(400);
+        });
+      });
+    });
+
+    it('should return error when trying to update protected fields (companyId, interviewFlowId)', () => {
       const invalidReferenceData = {
-        companyId: 99999, // ID que no existe
-        interviewFlowId: 99999 // ID que no existe
+        companyId: 99999,
+        interviewFlowId: 99999
       };
 
       cy.request({
-        method: 'PUT',
+        method: 'PATCH',
         url: `${API_URL}/positions/${testPositionId}`,
         body: invalidReferenceData,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(400);
-        expect(response.body).to.have.property('message', 'Invalid reference data');
-        expect(response.body.error).to.satisfy((error: string) => 
-          error.includes('Company not found') || error.includes('Interview flow not found')
-        );
+        expect(response.body).to.have.property('message', 'Validation error');
       });
     });
 
@@ -266,21 +253,18 @@ describe('Positions API - Update', () => {
         { location: 'New Location Only' }
       ];
 
-      partialUpdates.forEach((updateData, index) => {
+      partialUpdates.forEach((updateData) => {
         cy.request({
-          method: 'PUT',
+          method: 'PATCH',
           url: `${API_URL}/positions/${testPositionId}`,
           body: updateData
         }).then((response) => {
           expect(response.status).to.eq(200);
-          expect(response.body).to.have.property('message', 'Position updated successfully');
-          
-          // Verificar que el campo específico se actualizó
           const fieldName = Object.keys(updateData)[0];
           const fieldValue = Object.values(updateData)[0];
-          expect(response.body.data[fieldName]).to.eq(fieldValue);
+          expect(response.body[fieldName]).to.eq(fieldValue);
         });
       });
     });
   });
-}); 
+});

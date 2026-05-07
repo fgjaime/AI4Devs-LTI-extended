@@ -2,6 +2,42 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Internationalization (i18n)
+
+This app uses [`react-i18next`](https://react.i18next.com/) for internationalization. All user-visible strings are externalized into locale JSON files.
+
+### Locale files
+
+```
+frontend/src/i18n/
+├── index.ts                  # i18next initialization
+└── locales/
+    ├── en.json               # English resource bundle (default + fallback)
+    └── es.json               # Spanish resource bundle (1:1 key parity with en.json)
+```
+
+Key naming follows dot notation grouped by feature: `feature.subSection.element`
+(e.g. `dashboard.title`, `candidates.form.firstName`, `status.open`).
+
+### Setting the locale
+
+The active locale is set at build/startup time via the environment variable:
+
+```
+REACT_APP_DEFAULT_LOCALE=en   # English (default when variable is absent)
+REACT_APP_DEFAULT_LOCALE=es   # Spanish
+```
+
+Add this to your `.env` file (see `.env.example`) and restart the dev server.
+The fallback locale is always `en`.
+
+### Adding new strings
+
+1. Add the key and English value to `src/i18n/locales/en.json`.
+2. Add the matching key and Spanish translation to `src/i18n/locales/es.json`.
+3. Use `const { t } = useTranslation()` in your component and call `t('your.key')`.
+4. Run `npm test` — the parity test in `src/i18n/__tests__/locales.test.ts` will fail if the two JSON files diverge.
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Offcanvas, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { Pencil, Trash } from 'react-bootstrap-icons';
+import { useTranslation } from 'react-i18next';
 import { createInterview, updateInterview, deleteInterview } from '../services/interviewService';
 
 const API_BASE_URL = 'http://localhost:3010';
@@ -49,6 +50,7 @@ const isoToDatetimeLocal = (isoString) => {
 };
 
 const CandidateDetails = ({ candidate, onClose }) => {
+  const { t } = useTranslation();
   const [candidateDetails, setCandidateDetails] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [interviewSteps, setInterviewSteps] = useState([]);
@@ -73,7 +75,6 @@ const CandidateDetails = ({ candidate, onClose }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  // Fetch candidate details when candidate is set
   useEffect(() => {
     if (candidate) {
       setError(null);
@@ -84,12 +85,11 @@ const CandidateDetails = ({ candidate, onClose }) => {
         .then((data) => setCandidateDetails(data))
         .catch((err) => {
           console.error('Error fetching candidate details:', err);
-          setError('Failed to load candidate details');
+          setError(t('interviews.failedToLoad'));
         });
     }
-  }, [candidate]);
+  }, [candidate, t]);
 
-  // Fetch active employees on mount (when we have a candidate to show form)
   useEffect(() => {
     if (!candidate) return;
     fetch(`${API_BASE_URL}/employees`)
@@ -101,7 +101,6 @@ const CandidateDetails = ({ candidate, onClose }) => {
       });
   }, [candidate]);
 
-  // When candidate details load, pre-select application if opened from position context
   useEffect(() => {
     if (!candidateDetails || !candidateDetails.applications?.length) return;
     const contextApplicationId = candidate?.applicationId;
@@ -231,7 +230,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
     setDeleteLoading(true);
     try {
       await deleteInterview(candidate.id, deleteModalInterview.id, reason);
-      setSuccessMessage('Interview deleted successfully.');
+      setSuccessMessage(t('interviews.deleteSuccess'));
       const appId = deleteModalInterview.applicationId ?? deleteModalApplication?.id;
       setCandidateDetails((prev) => {
         if (!prev) return prev;
@@ -256,7 +255,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
         .then((data) => setCandidateDetails(data))
         .catch(() => {});
     } catch (err) {
-      setDeleteError(err.message || 'Failed to delete interview');
+      setDeleteError(err.message || t('interviews.failedToDelete'));
     } finally {
       setDeleteLoading(false);
     }
@@ -275,11 +274,11 @@ const CandidateDetails = ({ candidate, onClose }) => {
 
   const validateEditForm = () => {
     const errors = {};
-    if (!editFormData.interviewStepId) errors.interviewStepId = 'Interview step is required';
-    if (!editFormData.employeeId) errors.employeeId = 'Employee is required';
-    if (!editFormData.interviewDate) errors.interviewDate = 'Interview date is required';
+    if (!editFormData.interviewStepId) errors.interviewStepId = t('validation.interviewStep.required');
+    if (!editFormData.employeeId) errors.employeeId = t('validation.employee.required');
+    if (!editFormData.interviewDate) errors.interviewDate = t('validation.interviewDate.required');
     if (editFormData.notes && editFormData.notes.length > NOTES_MAX_LENGTH) {
-      errors.notes = `Notes must not exceed ${NOTES_MAX_LENGTH} characters`;
+      errors.notes = t('validation.notes.tooLong', { max: NOTES_MAX_LENGTH });
     }
     setEditValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -306,7 +305,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
     setEditSubmitLoading(true);
     try {
       const updated = await updateInterview(candidate.id, editingInterview.id, payload);
-      setSuccessMessage('Interview updated successfully!');
+      setSuccessMessage(t('interviews.updateSuccess'));
       setCandidateDetails((prev) => {
         if (!prev) return prev;
         return {
@@ -325,7 +324,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
       });
       closeEditModal();
     } catch (err) {
-      setEditError(err.message || 'Failed to update interview');
+      setEditError(err.message || t('interviews.failedToUpdate'));
     } finally {
       setEditSubmitLoading(false);
     }
@@ -333,12 +332,12 @@ const CandidateDetails = ({ candidate, onClose }) => {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.applicationId) errors.applicationId = 'Application is required';
-    if (!formData.interviewStepId) errors.interviewStepId = 'Interview step is required';
-    if (!formData.employeeId) errors.employeeId = 'Employee is required';
-    if (!formData.interviewDate) errors.interviewDate = 'Interview date is required';
+    if (!formData.applicationId) errors.applicationId = t('validation.application.required');
+    if (!formData.interviewStepId) errors.interviewStepId = t('validation.interviewStep.required');
+    if (!formData.employeeId) errors.employeeId = t('validation.employee.required');
+    if (!formData.interviewDate) errors.interviewDate = t('validation.interviewDate.required');
     if (formData.notes && formData.notes.length > NOTES_MAX_LENGTH) {
-      errors.notes = `Notes must not exceed ${NOTES_MAX_LENGTH} characters`;
+      errors.notes = t('validation.notes.tooLong', { max: NOTES_MAX_LENGTH });
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -367,7 +366,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
     setSubmitLoading(true);
     try {
       const created = await createInterview(candidate.id, payload);
-      setSuccessMessage('Interview created successfully!');
+      setSuccessMessage(t('interviews.createSuccess'));
       setCandidateDetails((prev) => {
         if (!prev) return prev;
         return {
@@ -382,7 +381,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
       setFormData(getInitialFormState());
       setInterviewSteps([]);
     } catch (err) {
-      setError(err.message || 'Failed to create interview');
+      setError(err.message || t('interviews.failedToCreate'));
     } finally {
       setSubmitLoading(false);
     }
@@ -394,21 +393,21 @@ const CandidateDetails = ({ candidate, onClose }) => {
   return (
     <Offcanvas show={!!candidate} onHide={onClose} placement="end">
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Candidate details</Offcanvas.Title>
+        <Offcanvas.Title>{t('candidates.details.title')}</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
         {!candidateDetails ? (
-          <p>Loading...</p>
+          <p>{t('candidates.details.loading')}</p>
         ) : (
           <>
             <h5>
               {candidateDetails.firstName} {candidateDetails.lastName}
             </h5>
-            <p>Email: {candidateDetails.email}</p>
-            <p>Phone: {candidateDetails.phone}</p>
-            <p>Address: {candidateDetails.address}</p>
+            <p>{t('candidates.details.email')} {candidateDetails.email}</p>
+            <p>{t('candidates.details.phone')} {candidateDetails.phone}</p>
+            <p>{t('candidates.details.address')} {candidateDetails.address}</p>
 
-            <h5>Education</h5>
+            <h5>{t('candidates.details.education')}</h5>
             {candidateDetails.educations?.length ? (
               candidateDetails.educations.map((edu) => (
                 <div key={edu.id}>
@@ -422,10 +421,10 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </div>
               ))
             ) : (
-              <p>No education listed</p>
+              <p>{t('candidates.details.noEducation')}</p>
             )}
 
-            <h5>Work experience</h5>
+            <h5>{t('candidates.details.workExperience')}</h5>
             {candidateDetails.workExperiences?.length ? (
               candidateDetails.workExperiences.map((work) => (
                 <div key={work.id}>
@@ -440,29 +439,29 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </div>
               ))
             ) : (
-              <p>No work experience listed</p>
+              <p>{t('candidates.details.noWorkExperience')}</p>
             )}
 
-            <h5>Resumes</h5>
+            <h5>{t('candidates.details.resumes')}</h5>
             {candidateDetails.resumes?.length ? (
               candidateDetails.resumes.map((resume) => (
                 <p key={resume.id}>
                   <a href={resume.filePath} target="_blank" rel="noopener noreferrer">
-                    Download resume
+                    {t('candidates.details.downloadResume')}
                   </a>
                 </p>
               ))
             ) : (
-              <p>No resumes</p>
+              <p>{t('candidates.details.noResumes')}</p>
             )}
 
-            <h5>Applications</h5>
+            <h5>{t('candidates.details.applications')}</h5>
             {applications.length ? (
               applications.map((app) => (
                 <div key={app.id} className="mb-4">
-                  <p>Position: {app.position?.title}</p>
-                  <p>Application date: {new Date(app.applicationDate).toLocaleDateString()}</p>
-                  <h5 className="mt-3 mb-2">Interviews</h5>
+                  <p>{t('candidates.details.position')} {app.position?.title}</p>
+                  <p>{t('candidates.details.applicationDate')} {new Date(app.applicationDate).toLocaleDateString()}</p>
+                  <h5 className="mt-3 mb-2">{t('candidates.details.interviews')}</h5>
                   {app.interviews?.length ? (
                     [...app.interviews]
                       .sort((a, b) => new Date(a.interviewDate) - new Date(b.interviewDate))
@@ -473,7 +472,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                         >
                           <div className="flex-grow-1">
                             <p className="mb-1 d-flex align-items-center gap-2 flex-wrap">
-                              <strong>Date:</strong> {new Date(interview.interviewDate).toLocaleString()}
+                              <strong>{t('interviews.dateLabel')}</strong> {new Date(interview.interviewDate).toLocaleString()}
                               <span
                                 className={`badge ${
                                   interview.result === 'Passed'
@@ -486,16 +485,16 @@ const CandidateDetails = ({ candidate, onClose }) => {
                                 {interview.result || 'Pending'}
                               </span>
                             </p>
-                            <p className="mb-1"><strong>Step:</strong> {interview.interviewStep?.name}</p>
-                            <p className="mb-1"><strong>Score:</strong> {interview.score != null ? `${interview.score}/5` : '-'}</p>
-                            <p className="mb-0"><strong>Notes:</strong> {interview.notes ?? '-'}</p>
+                            <p className="mb-1"><strong>{t('interviews.stepLabel')}</strong> {interview.interviewStep?.name}</p>
+                            <p className="mb-1"><strong>{t('interviews.scoreDisplay')}</strong> {interview.score != null ? `${interview.score}/5` : '-'}</p>
+                            <p className="mb-0"><strong>{t('interviews.notesLabel')}</strong> {interview.notes ?? '-'}</p>
                           </div>
                           <div className="d-flex align-items-center gap-1">
                             <Button
                               variant="link"
                               className="p-1 text-primary text-decoration-none"
                               onClick={() => openEditModal(interview, app)}
-                              aria-label="Edit interview"
+                              aria-label={t('interviews.editInterview')}
                             >
                               <Pencil size={18} />
                             </Button>
@@ -504,7 +503,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                                 variant="link"
                                 className="p-1 text-danger text-decoration-none"
                                 onClick={() => openDeleteModal({ ...interview, applicationId: app.id }, app)}
-                                aria-label="Delete interview"
+                                aria-label={t('interviews.deleteInterview')}
                               >
                                 <Trash size={18} />
                               </Button>
@@ -513,30 +512,30 @@ const CandidateDetails = ({ candidate, onClose }) => {
                         </div>
                       ))
                   ) : (
-                    <p>No interviews yet</p>
+                    <p>{t('candidates.details.noInterviews')}</p>
                   )}
                 </div>
               ))
             ) : (
-              <p>No applications</p>
+              <p>{t('candidates.details.noApplications')}</p>
             )}
 
             <hr className="my-3" />
-            <h5>Create new interview</h5>
+            <h5>{t('candidates.details.createInterview')}</h5>
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
             {error && <Alert variant="danger">{error}</Alert>}
 
             {hasApplications ? (
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-2">
-                  <Form.Label>Application</Form.Label>
+                  <Form.Label>{t('interviews.application')}</Form.Label>
                   <Form.Select
                     name="applicationId"
                     value={formData.applicationId}
                     onChange={handleApplicationChange}
                     isInvalid={!!validationErrors.applicationId}
                   >
-                    <option value="">Select an application</option>
+                    <option value="">{t('interviews.selectApplication')}</option>
                     {applications.map((app) => (
                       <option key={app.id} value={app.id}>
                         {app.position?.title} - {new Date(app.applicationDate).toLocaleDateString()}
@@ -551,7 +550,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Interview date and time</Form.Label>
+                  <Form.Label>{t('interviews.dateTime')}</Form.Label>
                   <Form.Control
                     type="datetime-local"
                     name="interviewDate"
@@ -567,7 +566,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Interview step</Form.Label>
+                  <Form.Label>{t('interviews.step')}</Form.Label>
                   <Form.Select
                     name="interviewStepId"
                     value={formData.interviewStepId}
@@ -575,7 +574,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                     disabled={!formData.applicationId || loading}
                     isInvalid={!!validationErrors.interviewStepId}
                   >
-                    <option value="">Select a step</option>
+                    <option value="">{t('interviews.selectStep')}</option>
                     {interviewSteps.map((step) => (
                       <option key={step.id} value={step.id}>
                         {step.name}
@@ -590,14 +589,14 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Employee</Form.Label>
+                  <Form.Label>{t('interviews.employee')}</Form.Label>
                   <Form.Select
                     name="employeeId"
                     value={formData.employeeId}
                     onChange={handleInputChange}
                     isInvalid={!!validationErrors.employeeId}
                   >
-                    <option value="">Select an employee</option>
+                    <option value="">{t('interviews.selectEmployee')}</option>
                     {employees.map((emp) => (
                       <option key={emp.id} value={emp.id}>
                         {emp.name} ({emp.email})
@@ -612,7 +611,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Result</Form.Label>
+                  <Form.Label>{t('interviews.result')}</Form.Label>
                   <Form.Select
                     name="result"
                     value={formData.result}
@@ -627,7 +626,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Score (0-5, optional)</Form.Label>
+                  <Form.Label>{t('interviews.score')}</Form.Label>
                   <div>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
@@ -641,7 +640,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                         }}
                         onClick={() => handleScoreChange(star)}
                         onKeyDown={(e) => e.key === 'Enter' && handleScoreChange(star)}
-                        aria-label={`Score ${star}`}
+                        aria-label={t('interviews.scoreLabel', { star })}
                       >
                         ★
                       </span>
@@ -650,7 +649,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-2">
-                  <Form.Label>Notes (max {NOTES_MAX_LENGTH} characters)</Form.Label>
+                  <Form.Label>{t('interviews.notes', { max: NOTES_MAX_LENGTH })}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -674,22 +673,22 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   type="submit"
                   disabled={submitLoading}
                 >
-                  {submitLoading ? 'Creating...' : 'Create interview'}
+                  {submitLoading ? t('interviews.creating') : t('interviews.createButton')}
                 </Button>
               </Form>
             ) : (
-              <p>This candidate has no applications. Create an interview from a position view.</p>
+              <p>{t('candidates.details.noApplicationsCreate')}</p>
             )}
 
             <Modal show={!!editingInterview} onHide={closeEditModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Edit Interview</Modal.Title>
+                <Modal.Title>{t('interviews.editTitle')}</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 {editError && <Alert variant="danger">{editError}</Alert>}
                 <Form onSubmit={handleEditSubmit}>
                   <Form.Group className="mb-2">
-                    <Form.Label>Interview date and time</Form.Label>
+                    <Form.Label>{t('interviews.dateTime')}</Form.Label>
                     <Form.Control
                       type="datetime-local"
                       name="interviewDate"
@@ -705,7 +704,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-2">
-                    <Form.Label>Interview step</Form.Label>
+                    <Form.Label>{t('interviews.step')}</Form.Label>
                     <Form.Select
                       name="interviewStepId"
                       value={editFormData.interviewStepId}
@@ -713,7 +712,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                       disabled={editLoading}
                       isInvalid={!!editValidationErrors.interviewStepId}
                     >
-                      <option value="">Select a step</option>
+                      <option value="">{t('interviews.selectStep')}</option>
                       {editSteps.map((step) => (
                         <option key={step.id} value={String(step.id)}>
                           {step.name}
@@ -728,14 +727,14 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-2">
-                    <Form.Label>Employee</Form.Label>
+                    <Form.Label>{t('interviews.employee')}</Form.Label>
                     <Form.Select
                       name="employeeId"
                       value={editFormData.employeeId}
                       onChange={handleEditInputChange}
                       isInvalid={!!editValidationErrors.employeeId}
                     >
-                      <option value="">Select an employee</option>
+                      <option value="">{t('interviews.selectEmployee')}</option>
                       {employees.map((emp) => (
                         <option key={emp.id} value={String(emp.id)}>
                           {emp.name} ({emp.email})
@@ -750,7 +749,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-2">
-                    <Form.Label>Result</Form.Label>
+                    <Form.Label>{t('interviews.result')}</Form.Label>
                     <Form.Select
                       name="result"
                       value={editFormData.result}
@@ -765,7 +764,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-2">
-                    <Form.Label>Score (0-5, optional)</Form.Label>
+                    <Form.Label>{t('interviews.score')}</Form.Label>
                     <div>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span
@@ -779,7 +778,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                           }}
                           onClick={() => handleEditScoreChange(star)}
                           onKeyDown={(e) => e.key === 'Enter' && handleEditScoreChange(star)}
-                          aria-label={`Score ${star}`}
+                          aria-label={t('interviews.scoreLabel', { star })}
                         >
                           ★
                         </span>
@@ -788,7 +787,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-2">
-                    <Form.Label>Notes (max {NOTES_MAX_LENGTH} characters)</Form.Label>
+                    <Form.Label>{t('interviews.notes', { max: NOTES_MAX_LENGTH })}</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
@@ -858,15 +857,15 @@ const CandidateDetails = ({ candidate, onClose }) => {
                           className="me-auto"
                         >
                           <Trash size={16} className="me-1" />
-                          Delete
+                          {t('interviews.delete')}
                         </Button>
                       );
                     })()}
                     <Button variant="secondary" onClick={closeEditModal} disabled={editSubmitLoading}>
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button variant="primary" type="submit" disabled={editSubmitLoading}>
-                      {editSubmitLoading ? 'Saving...' : 'Save'}
+                      {editSubmitLoading ? t('interviews.saving') : t('interviews.save')}
                     </Button>
                   </div>
                 </Form>
@@ -875,21 +874,21 @@ const CandidateDetails = ({ candidate, onClose }) => {
 
             <Modal show={!!deleteModalInterview} onHide={closeDeleteModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Delete interview</Modal.Title>
+                <Modal.Title>{t('interviews.deleteTitle')}</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <p className="text-muted mb-3">
-                  This will permanently remove the interview. Please provide a reason for the deletion (required).
+                  {t('interviews.deleteWarning')}
                 </p>
                 {deleteError && <Alert variant="danger">{deleteError}</Alert>}
                 <Form.Group className="mb-3">
-                  <Form.Label>Deletion reason</Form.Label>
+                  <Form.Label>{t('interviews.deleteReason')}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
                     value={deleteReason}
                     onChange={(e) => setDeleteReason(e.target.value)}
-                    placeholder="e.g. Interview cancelled by candidate"
+                    placeholder={t('interviews.deleteReasonPlaceholder')}
                     isInvalid={deleteReason.length > REASON_MAX_LENGTH}
                   />
                   <Form.Text className="text-muted">
@@ -897,20 +896,20 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Form.Text>
                   {deleteReason.length > REASON_MAX_LENGTH && (
                     <Form.Control.Feedback type="invalid">
-                      Reason must not exceed {REASON_MAX_LENGTH} characters
+                      {t('interviews.deleteReasonTooLong', { max: REASON_MAX_LENGTH })}
                     </Form.Control.Feedback>
                   )}
                 </Form.Group>
                 <div className="d-flex gap-2 justify-content-end">
                   <Button variant="secondary" onClick={closeDeleteModal} disabled={deleteLoading}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     variant="danger"
                     onClick={handleDeleteConfirm}
                     disabled={deleteLoading || !deleteReason.trim() || deleteReason.length > REASON_MAX_LENGTH}
                   >
-                    {deleteLoading ? 'Deleting...' : 'Delete'}
+                    {deleteLoading ? t('interviews.deleting') : t('interviews.confirmDelete')}
                   </Button>
                 </div>
               </Modal.Body>

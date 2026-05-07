@@ -703,8 +703,8 @@ components:
           description: Position description (required, cannot be empty)
         status:
           type: string
-          enum: [Open, Contratado, Cerrado, Borrador]
-          description: Position status (must be one of the valid status values)
+          enum: [Draft, Open, Closed, Hired]
+          description: Position status (must be one of the canonical English values)
         isVisible:
           type: boolean
           description: Whether position is visible to candidates

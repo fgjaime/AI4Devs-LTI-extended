@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "visible": "Visible",
+    "ratingLabel": "puntuación"
+  },
+  "dashboard": {
+    "title": "Dashboard del Reclutador",
+    "logoAlt": "Logo LTI",
+    "candidates": {
+      "title": "Añadir Candidato",
+      "button": "Añadir Nuevo Candidato"
+    },
+    "positions": {
+      "title": "Ver Posiciones",
+      "button": "Ir a Posiciones"
+    }
+  },
+  "candidates": {
+    "form": {
+      "title": "Agregar Candidato",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "cv": "CV",
+      "addEducation": "Añadir Educación",
+      "institution": "Institución",
+      "degree": "Título",
+      "startDate": "Fecha de Inicio",
+      "endDate": "Fecha de Fin",
+      "remove": "Eliminar",
+      "addWorkExperience": "Añadir Experiencia Laboral",
+      "company": "Empresa",
+      "positionField": "Puesto",
+      "submit": "Enviar",
+      "success": "Candidato añadido con éxito",
+      "errors": {
+        "invalidData": "Datos inválidos: {{message}}",
+        "serverError": "Error interno del servidor",
+        "sendError": "Error al enviar datos del candidato",
+        "addError": "Error al añadir candidato: {{message}}"
+      }
+    },
+    "details": {
+      "title": "Detalles del candidato",
+      "loading": "Cargando...",
+      "email": "Correo:",
+      "phone": "Teléfono:",
+      "address": "Dirección:",
+      "education": "Educación",
+      "noEducation": "Sin educación registrada",
+      "workExperience": "Experiencia laboral",
+      "noWorkExperience": "Sin experiencia laboral registrada",
+      "resumes": "Currículums",
+      "noResumes": "Sin currículums",
+      "downloadResume": "Descargar currículum",
+      "applications": "Solicitudes",
+      "noApplications": "Sin solicitudes",
+      "position": "Posición:",
+      "applicationDate": "Fecha de solicitud:",
+      "interviews": "Entrevistas",
+      "noInterviews": "Sin entrevistas todavía",
+      "noApplicationsCreate": "Este candidato no tiene solicitudes. Crea una entrevista desde la vista de posición.",
+      "createInterview": "Crear nueva entrevista",
+      "failedToLoad": "Error al cargar los detalles del candidato"
+    }
+  },
+  "positions": {
+    "backToDashboard": "Volver al Dashboard",
+    "title": "Posiciones",
+    "backToPositions": "Volver a Posiciones",
+    "search": {
+      "byTitle": "Buscar por título",
+      "byDate": "Buscar por fecha",
+      "ariaLabel": "Buscar posiciones por título"
+    },
+    "filter": {
+      "status": "Estado",
+      "manager": "Manager"
+    },
+    "card": {
+      "manager": "Manager",
+      "deadline": "Fecha límite",
+      "edit": "Editar",
+      "viewProcess": "Ver proceso"
+    },
+    "edit": {
+      "title": "Editar Posición",
+      "backToPositions": "← Volver a Posiciones",
+      "success": "¡Posición actualizada con éxito! Redirigiendo a la lista de posiciones...",
+      "loadingData": "Cargando datos de la posición...",
+      "loadError": "Error al cargar los datos de la posición. Por favor, inténtalo de nuevo.",
+      "form": {
+        "title": "Título *",
+        "description": "Descripción *",
+        "status": "Estado *",
+        "location": "Ubicación *",
+        "jobDescription": "Descripción del puesto *",
+        "requirements": "Requisitos",
+        "responsibilities": "Responsabilidades",
+        "salaryMin": "Salario mínimo",
+        "salaryMax": "Salario máximo",
+        "employmentType": "Tipo de empleo",
+        "benefits": "Beneficios",
+        "companyDescription": "Descripción de la empresa",
+        "applicationDeadline": "Fecha límite de solicitud",
+        "contactInfo": "Información de contacto",
+        "updating": "Actualizando...",
+        "updatePosition": "Actualizar Posición",
+        "cancel": "Cancelar"
+      }
+    }
+  },
+  "interviews": {
+    "application": "Solicitud",
+    "selectApplication": "Seleccionar una solicitud",
+    "dateTime": "Fecha y hora de la entrevista",
+    "step": "Paso de la entrevista",
+    "selectStep": "Seleccionar un paso",
+    "employee": "Empleado",
+    "selectEmployee": "Seleccionar un empleado",
+    "result": "Resultado",
+    "score": "Puntuación (0-5, opcional)",
+    "scoreLabel": "Puntuación {{star}}",
+    "notes": "Notas (máx. {{max}} caracteres)",
+    "creating": "Creando...",
+    "createButton": "Crear entrevista",
+    "editTitle": "Editar Entrevista",
+    "deleteTitle": "Eliminar entrevista",
+    "deleteWarning": "Esto eliminará permanentemente la entrevista. Por favor, proporciona un motivo para la eliminación (obligatorio).",
+    "deleteReason": "Motivo de la eliminación",
+    "deleteReasonPlaceholder": "p.ej. Entrevista cancelada por el candidato",
+    "deleteReasonTooLong": "El motivo no puede superar {{max}} caracteres",
+    "confirmDelete": "Eliminar",
+    "deleting": "Eliminando...",
+    "saving": "Guardando...",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "dateLabel": "Fecha:",
+    "stepLabel": "Paso:",
+    "scoreDisplay": "Puntuación:",
+    "notesLabel": "Notas:",
+    "failedToLoad": "Error al cargar los detalles del candidato",
+    "failedToCreate": "Error al crear la entrevista",
+    "failedToUpdate": "Error al actualizar la entrevista",
+    "failedToDelete": "Error al eliminar la entrevista",
+    "createSuccess": "¡Entrevista creada con éxito!",
+    "updateSuccess": "¡Entrevista actualizada con éxito!",
+    "deleteSuccess": "Entrevista eliminada con éxito.",
+    "editInterview": "Editar entrevista",
+    "deleteInterview": "Eliminar entrevista"
+  },
+  "fileUploader": {
+    "upload": "Subir Archivo",
+    "selectedFile": "Archivo seleccionado:",
+    "uploadSuccess": "Archivo subido con éxito",
+    "uploadError": "Error al subir archivo"
+  },
+  "validation": {
+    "title": {
+      "required": "El título es obligatorio",
+      "tooLong": "El título no puede superar los 100 caracteres"
+    },
+    "description": {
+      "required": "La descripción es obligatoria"
+    },
+    "location": {
+      "required": "La ubicación es obligatoria"
+    },
+    "jobDescription": {
+      "required": "La descripción del puesto es obligatoria"
+    },
+    "status": {
+      "invalid": "Valor de estado inválido"
+    },
+    "salaryMin": {
+      "invalid": "El salario mínimo debe ser un número >= 0"
+    },
+    "salaryMax": {
+      "invalid": "El salario máximo debe ser un número >= 0",
+      "ltMin": "El salario máximo debe ser >= al salario mínimo"
+    },
+    "applicationDeadline": {
+      "invalid": "Formato de fecha inválido"
+    },
+    "application": {
+      "required": "La solicitud es obligatoria"
+    },
+    "interviewStep": {
+      "required": "El paso de la entrevista es obligatorio"
+    },
+    "employee": {
+      "required": "El empleado es obligatorio"
+    },
+    "interviewDate": {
+      "required": "La fecha de la entrevista es obligatoria"
+    },
+    "notes": {
+      "tooLong": "Las notas no pueden superar {{max}} caracteres"
+    },
+    "reason": {
+      "tooLong": "El motivo no puede superar {{max}} caracteres"
+    }
+  },
+  "errors": {
+    "invalidData": "Datos inválidos: {{message}}",
+    "serverError": "Error interno del servidor",
+    "sendError": "Error al enviar datos del candidato",
+    "addError": "Error al añadir candidato: {{message}}"
+  },
+  "status": {
+    "draft": "Borrador",
+    "open": "Abierto",
+    "closed": "Cerrado",
+    "hired": "Contratado"
+  }
+}
