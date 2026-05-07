@@ -37,20 +37,27 @@ Start a new change using the experimental artifact-driven approach.
    Add `--schema <name>` only if the user requested a specific workflow.
    This creates a scaffolded change at `openspec/changes/<name>/` with the selected schema.
 
-4. **Show the artifact status**
+4. **Move any referenced artifact into the change folder**
+   If the user mentioned an artifact (e.g., an enriched user story saved in `tmp/`), move it into the newly created change directory:
+   ```bash
+   mv tmp/<artifact-file> openspec/changes/<name>/
+   ```
+   Skip this step if no artifact was mentioned.
+
+5. **Show the artifact status**
    ```bash
    openspec status --change "<name>"
    ```
    This shows which artifacts need to be created and which are ready (dependencies satisfied).
 
-5. **Get instructions for the first artifact**
+6. **Get instructions for the first artifact**
    The first artifact depends on the schema. Check the status output to find the first artifact with status "ready".
    ```bash
    openspec instructions <first-artifact-id> --change "<name>"
    ```
    This outputs the template and context for creating the first artifact.
 
-6. **STOP and wait for user direction**
+7. **STOP and wait for user direction**
 
 **Output**
 

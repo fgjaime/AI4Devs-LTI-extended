@@ -27,3 +27,10 @@ yarn-error.log*
 
 # .env
 .mcp.json
+
+# Claude Code per-user settings
+**/.claude/settings.json
+**/.claude/settings.local.json
+
+# temp files
+**/tmp
