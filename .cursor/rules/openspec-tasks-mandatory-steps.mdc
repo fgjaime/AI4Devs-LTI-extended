@@ -35,6 +35,79 @@ All backend implementation tasks MUST include these steps in the correct order:
 
 **IMPORTANT**: The coding agent (AI) MUST perform all manual testing steps itself. **NEVER delegate testing to the user**. These tests must be executed by the agent to mark tasks as completed in `tasks.md`.
 
+### Step N+1: Run Unit Tests and Verify Database State (MANDATORY)
+
+**Agent Responsibility**: The coding agent MUST execute unit tests, validate database integrity before/after execution, and produce a test report artifact in the change spec folder. This is NOT optional and cannot be delegated to the user.
+
+**Implementation Steps** (Agent must perform):
+1. **Prepare Test Environment**:
+   - Ensure required services are available (database, cache, dependencies)
+   - Capture pre-test database state relevant to the change (counts, key records, checksums, or snapshots)
+   - Document the exact test command(s) that will be executed
+
+2. **Run Targeted Unit Tests First**:
+   - Execute focused tests for the modified module(s) and related behavior
+   - Confirm failures are resolved and no new regressions appear in targeted scope
+   - Capture command output summary (passed/failed/skipped)
+
+3. **Run Broader Unit Test Suite**:
+   - Execute the project/unit suite required by `openspec/config.yaml` (or justified subset if configured)
+   - Record total test counts, failures, runtime, and any flaky behavior observed
+
+4. **Verify Post-Test Database State**:
+   - Re-check the same database indicators captured before tests
+   - Confirm no unintended mutations remain after tests complete
+   - If any mutation occurred, restore state and document the restoration
+
+5. **Create Unit Test Verification Report in Spec Folder**:
+   - Save report under the current change folder in `specs/<change-name>/reports/`
+   - Use this filename pattern: `YYYY-MM-DD-step-N+1-unit-test-and-db-verification.md`
+   - Include executed commands, summarized results, database pre/post comparison, and cleanup actions
+
+6. **Mark Task as Completed**: Only after unit tests pass (or approved exceptions are documented), database state is verified/restored, and the report file is created, mark Step N+1 as completed in `tasks.md`.
+
+**Report Template** (store in `specs/<change-name>/reports/`):
+```markdown
+# Step N+1 Report - Unit Tests and Database Verification
+
+- Date: YYYY-MM-DD
+- Change: <change-name>
+- Agent: <agent-name>
+
+## Commands Executed
+- `<command 1>`
+- `<command 2>`
+
+## Unit Test Results
+- Targeted tests: X passed, Y failed, Z skipped
+- Full/required suite: X passed, Y failed, Z skipped
+- Runtime: <duration>
+- Notes: <flaky tests, retries, exceptions>
+
+## Database State Verification
+- Pre-test baseline:
+  - <metric/table/check>: <value>
+- Post-test validation:
+  - <metric/table/check>: <value>
+- State restored: Yes/No
+- Restoration actions (if any): <actions>
+
+## Outcome
+- Step N+1 status: PASS/FAIL
+- Blocking issues: <none or list>
+```
+
+**Dependencies**:
+- Test runner and project test dependencies installed
+- Database access for state verification/restoration
+- Permission to create report files in `specs/<change-name>/reports/`
+
+**Notes**:
+- **The agent MUST execute tests itself** - never ask the user to run tests
+- This step is mandatory even when code changes look small
+- Report naming must follow the required pattern for traceability
+- **Task completion in tasks.md can only be marked after report creation**
+
 ### Step N+2: Manual Endpoint Testing with curl (MANDATORY)
 
 **Agent Responsibility**: The coding agent MUST execute all curl commands and verify responses. This is NOT optional and cannot be delegated to the user.
@@ -165,6 +238,7 @@ Before finalizing any `tasks.md` file, verify:
 - [ ] Steps are numbered sequentially
 - [ ] Mandatory steps are clearly marked with "(MANDATORY)" label
 - [ ] Branch naming follows the convention: `feature/[name]-backend`
+- [ ] Step N+1 includes report path and naming convention in `specs/<change-name>/reports/`
 - [ ] Manual testing steps explicitly state "AGENT MUST EXECUTE"
 - [ ] Tasks include database state restoration steps
 - [ ] E2E testing step is included if frontend changes are involved
@@ -193,7 +267,12 @@ This rule applies when:
 ...
 
 ## 9. Backend: Run Unit Tests and Verify Database State (MANDATORY)
-...
+- [ ] 9.1 Capture pre-test database baseline for impacted entities
+- [ ] 9.2 Run targeted unit tests for changed modules
+- [ ] 9.3 Run required broader unit test suite from config
+- [ ] 9.4 Verify post-test database state and restore if needed
+- [ ] 9.5 Create report `specs/<change-name>/reports/YYYY-MM-DD-step-N+1-unit-test-and-db-verification.md`
+- [ ] 9.6 Mark step complete only after tests pass and report exists
 
 ## 10. Backend: Manual Endpoint Testing with curl (MANDATORY - AGENT MUST EXECUTE)
 - [ ] 10.1 Ensure backend server is running
