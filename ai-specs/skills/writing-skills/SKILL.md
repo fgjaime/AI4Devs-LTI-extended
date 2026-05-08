@@ -629,6 +629,7 @@ Deploying untested skills = deploying untested code. It's a violation of quality
 - [ ] Supporting files only for tools or heavy reference
 
 **Deployment:**
+- [ ] If `ai-specs/skills` changed (add/remove/rename), run `sync-agent-symlinks` to analyze and sync `.claude/skills` and `.cursor/skills`
 - [ ] Commit skill to git and push to your fork (if configured)
 - [ ] Consider contributing back via PR (if broadly useful)
 

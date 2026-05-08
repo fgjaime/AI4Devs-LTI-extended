@@ -7,7 +7,7 @@ version: 1.0.0
 
 # run-parallel-tasks Skill
 
-Reads `parallel-tasks.md` from the project root, spins up one isolated agent per task, and runs each through the full specboot pipeline without supervision.
+Reads `parallel-tasks.md` from the references folder, spins up one isolated agent per task, and runs each through the full specboot pipeline without supervision.
 
 **Pipeline per agent:** worktree → enrich-us → opsx:new → opsx:ff → opsx:apply → opsx:verify → stop
 
