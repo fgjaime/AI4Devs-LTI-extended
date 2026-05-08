@@ -37,7 +37,18 @@ For detailed standards and guidelines specific to different areas of the project
 - When a request matches a skill, load and follow the corresponding `SKILL.md` automatically before continuing.
 - Also load any referenced files in the skill folder (for example, `references/*.md`) when the skill requires them.
 
-## 5. Symlink Integrity and Multi-Agent Portability
+## 5. Planning Model Requirement
+
+Planning workflows must run with Opus high reasoning.
+
+This requirement applies to:
+- `enrich-us`
+- `openspec-ff-change`
+- `openspec-continue-change`
+
+Before starting any of these workflows, verify the session is using Opus high reasoning. If it is not, stop before creating or updating artifacts and ask the user to switch models.
+
+## 6. Symlink Integrity and Multi-Agent Portability
 
 - **Canonical Source**: Keep reusable artifacts in `ai-specs` as the canonical source. Agent-specific paths (such as `.claude` and `.cursor`) should reference them through symlinks when possible.
 - **Update Safety**: Whenever a file is renamed, moved, or its suffix changes, verify and update all symlinks that target it before considering the change complete.
