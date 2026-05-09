@@ -3,6 +3,7 @@ import { Offcanvas, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { Pencil, Trash } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { createInterview, updateInterview, deleteInterview } from '../services/interviewService';
+import './CandidateDetails.css';
 
 const API_BASE_URL = 'http://localhost:3010';
 const NOTES_MAX_LENGTH = 1000;
@@ -391,7 +392,7 @@ const CandidateDetails = ({ candidate, onClose }) => {
   const hasApplications = applications.length > 0;
 
   return (
-    <Offcanvas show={!!candidate} onHide={onClose} placement="end">
+    <Offcanvas show={!!candidate} onHide={onClose} placement="end" className="candidate-details-offcanvas">
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>{t('candidates.details.title')}</Offcanvas.Title>
       </Offcanvas.Header>
