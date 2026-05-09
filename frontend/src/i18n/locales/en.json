@@ -19,9 +19,42 @@
     "positions": {
       "title": "View Positions",
       "button": "Go to Positions"
+    },
+    "viewCandidates": {
+      "title": "View Candidates",
+      "button": "Go to Candidates"
     }
   },
   "candidates": {
+    "list": {
+      "title": "Candidates",
+      "backToDashboard": "Back to Dashboard",
+      "searchPlaceholder": "Search by name or email",
+      "searchAriaLabel": "Search candidates",
+      "columns": {
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "activePosition": "Active Position",
+        "currentStep": "Current Step",
+        "applicationDate": "Application Date",
+        "actions": "Actions"
+      },
+      "pageSize": "Per page:",
+      "pageSizeAriaLabel": "Items per page",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "viewDetails": "View details",
+      "noActiveProcess": "No active process",
+      "emptyTitle": "No candidates yet",
+      "emptyDescription": "Add your first candidate to get started.",
+      "addCandidate": "Add Candidate",
+      "errorTitle": "Failed to load candidates",
+      "retry": "Retry",
+      "loading": "Loading candidates...",
+      "sortAsc": "Sort ascending",
+      "sortDesc": "Sort descending"
+    },
     "form": {
       "title": "Add Candidate",
       "firstName": "First name",

@@ -19,9 +19,42 @@
     "positions": {
       "title": "Ver Posiciones",
       "button": "Ir a Posiciones"
+    },
+    "viewCandidates": {
+      "title": "Ver Candidatos",
+      "button": "Ir a Candidatos"
     }
   },
   "candidates": {
+    "list": {
+      "title": "Candidatos",
+      "backToDashboard": "Volver al Dashboard",
+      "searchPlaceholder": "Buscar por nombre o correo",
+      "searchAriaLabel": "Buscar candidatos",
+      "columns": {
+        "fullName": "Nombre completo",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "activePosition": "Posición activa",
+        "currentStep": "Paso actual",
+        "applicationDate": "Fecha de solicitud",
+        "actions": "Acciones"
+      },
+      "pageSize": "Por página:",
+      "pageSizeAriaLabel": "Elementos por página",
+      "prevPage": "Anterior",
+      "nextPage": "Siguiente",
+      "viewDetails": "Ver detalles",
+      "noActiveProcess": "Sin proceso activo",
+      "emptyTitle": "Sin candidatos aún",
+      "emptyDescription": "Agrega tu primer candidato para comenzar.",
+      "addCandidate": "Agregar Candidato",
+      "errorTitle": "Error al cargar candidatos",
+      "retry": "Reintentar",
+      "loading": "Cargando candidatos...",
+      "sortAsc": "Ordenar ascendente",
+      "sortDesc": "Ordenar descendente"
+    },
     "form": {
       "title": "Agregar Candidato",
       "firstName": "Nombre",

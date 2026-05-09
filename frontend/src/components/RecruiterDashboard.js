@@ -14,7 +14,7 @@ const RecruiterDashboard = () => {
             </div>
             <h1 className="mb-4 text-center">{t('dashboard.title')}</h1>
             <Row>
-                <Col md={6}>
+                <Col md={4} className="mb-4">
                     <Card className="shadow p-4">
                         <h5 className="mb-4">{t('dashboard.candidates.title')}</h5>
                         <Link to="/add-candidate">
@@ -22,11 +22,19 @@ const RecruiterDashboard = () => {
                         </Link>
                     </Card>
                 </Col>
-                <Col md={6}>
+                <Col md={4} className="mb-4">
                     <Card className="shadow p-4">
                         <h5 className="mb-4">{t('dashboard.positions.title')}</h5>
                         <Link to="/positions">
                             <Button variant="primary" className="btn-block">{t('dashboard.positions.button')}</Button>
+                        </Link>
+                    </Card>
+                </Col>
+                <Col md={4} className="mb-4">
+                    <Card className="shadow p-4">
+                        <h5 className="mb-4">{t('dashboard.viewCandidates.title')}</h5>
+                        <Link to="/candidates">
+                            <Button variant="primary" className="btn-block">{t('dashboard.viewCandidates.button')}</Button>
                         </Link>
                     </Card>
                 </Col>

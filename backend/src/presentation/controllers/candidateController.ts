@@ -97,8 +97,13 @@ export const getAllCandidatesController = async (req: Request, res: Response) =>
         res.status(200).json(result);
     } catch (error: unknown) {
         if (error instanceof Error) {
-            if (error.message.includes('must be greater than')) {
-                res.status(400).json({ error: error.message });
+            const message = error.message;
+            if (
+                message.includes('must be greater than') ||
+                message.startsWith('Invalid sort') ||
+                message.startsWith('Invalid order')
+            ) {
+                res.status(400).json({ error: message });
             } else {
                 res.status(500).json({ error: 'Internal Server Error' });
             }
