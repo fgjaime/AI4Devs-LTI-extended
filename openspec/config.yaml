@@ -38,51 +38,42 @@ rules:
   # Rules for backend implementation plans and specs
   spec:
     - When creating backend implementation plans or specs, follow the Backend Implementation Plan Template Structure
-    - "All backend plans must include these MANDATORY sections:"
-    - "1. Header with ticket ID and feature name"
-    - "2. Overview with DDD and clean architecture principles"
-    - "3. Architecture Context (Domain, Application, Presentation layers)"
-    - "4. Implementation Steps (must start with Step 0: Create Feature Branch)"
-    - "5. Implementation Order (numbered list)"
-    - "6. Testing Checklist with mandatory validations"
-    - "7. Error Response Format"
-    - "8. Dependencies"
-    - "9. Notes"
-    - "10. Next Steps After Implementation"
-    - "11. Implementation Verification"
+    - |
+      All backend plans must include these MANDATORY sections:
+      1. Header with ticket ID and feature name
+      2. Overview with DDD and clean architecture principles
+      3. Architecture Context (Domain, Application, Presentation layers)
+      4. Implementation Steps (must start with Step 0: Create Feature Branch)
+      5. Implementation Order (numbered list)
+      6. Testing Checklist with mandatory validations
+      7. Error Response Format
+      8. Dependencies
+      9. Notes
+      10. Next Steps After Implementation
+      11. Implementation Verification
   
-  # Backend-specific implementation rules
+  # Backend-specific implementation rules (flat strings so YAML parses)
   backend:
-    - Adopt the role of backend-developer when working on backend changes
-    - Apply Domain-Driven Design (DDD) principles
-    - Follow clean architecture with Domain, Application, and Presentation layers
-    - All implementation must follow TDD (Test-Driven Development)
-    - "Branch naming: feature/[ticket-id]-backend (required, separate from general task branches)"
-    - MANDATORY Steps (must be included in all backend implementation plans):
-      - Step 0: Create Feature Branch (must be FIRST step)
-      - Step N: Review and Update Existing Unit Tests (MANDATORY)
-      - Step N+1: Run Unit Tests and Verify Database State (MANDATORY)
-      - Step N+2: Manual Endpoint Testing with curl (MANDATORY)
-      - Step N+3: Update Technical Documentation (MANDATORY)
-    - Common implementation steps:
-      - Step 1: Create Validation Function
-      - Step 2: Create Service Method
-      - Step 3: Create Controller Method
-      - Step 4: Add Route
-      - Step 5: Write Unit Tests (with subcategories: Successful Cases, Validation Errors, Not Found, Reference Validation, Server Errors, Edge Cases)
-    - Testing requirements:
-      - All existing unit tests must be reviewed and updated if necessary
-      - All new unit tests must be created and passing
-      - Full test suite must execute with 0 failures
-      - Test report must be shown and verified
-      - Database state must be properly restored after all tests
-      - All new endpoints must be manually tested using curl
-      - All CREATE/UPDATE/DELETE operations must restore database to original state after testing
-      - Error cases must be tested manually (validation errors, 404, etc.)
-    - Documentation requirements:
-      - Data model changes → Update `openspec/specs/data-model.md`
-      - API endpoint changes → Update `openspec/specs/api-spec.yml`
-      - Standards/libraries/config changes → Update relevant `*-standards.mdc` files
-      - All documentation must be written in English
-    - Error response format must be defined with JSON structure and HTTP status code mapping
-    - Implementation verification checklist must include: Code Quality, Functionality, Testing, Integration, Documentation updates
+    - |
+      Adopt backend-developer role; Domain-Driven Design; clean architecture
+      layers; all implementation follows TDD. Branch naming: feature/[ticket-id]-backend (required).
+    - |
+      MANDATORY steps in backend implementation plans —
+      Step 0: Create Feature Branch (FIRST).
+      Step N: Review and update existing unit tests.
+      Step N+1: Run unit tests and verify database state (with report artifact).
+      Step N+2: Manual endpoint testing with curl.
+      Step N+3: Update technical documentation.
+    - |
+      Common implementation order — validation function, service method,
+      controller method, route, then unit tests (success, validation errors, 404,
+      reference validation, server errors, edge cases).
+    - |
+      Testing — review/update all impacted tests; new tests passing; full suite green;
+      restore database after tests; manual curl on new endpoints;
+      CREATE/UPDATE/DELETE tests restore DB; cover validation and 404 errors.
+    - |
+      Documentation — data-model changes → openspec/specs/data-model.md;
+      API changes → openspec/specs/api-spec.yml; standards changes → relevant *-standards.mdc; English only.
+    - Error responses must specify JSON bodies and HTTP status mapping.
+    - Verification checklist covers code quality, functionality, testing, integration, documentation updates.

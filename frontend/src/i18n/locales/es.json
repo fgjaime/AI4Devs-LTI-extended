@@ -12,6 +12,16 @@
   "dashboard": {
     "title": "Dashboard del Reclutador",
     "logoAlt": "Logo LTI",
+    "sections": {
+      "candidates": {
+        "heading": "Candidatos",
+        "lead": "Crea fichas de candidatos y gestiona sus datos."
+      },
+      "positions": {
+        "heading": "Posiciones",
+        "lead": "Roles abiertos, procesos y detalles de cada posición."
+      }
+    },
     "candidates": {
       "title": "Añadir Candidato",
       "button": "Añadir Nuevo Candidato"
