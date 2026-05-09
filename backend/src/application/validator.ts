@@ -275,3 +275,12 @@ export const validateInterviewDeletion = (candidateId: any, interviewId: any, de
         throw new Error('reason must not exceed 500 characters');
     }
 };
+
+export const validateCandidatePositionDeletion = (positionId: any, candidateId: any): void => {
+    if (typeof positionId !== 'number' || !Number.isInteger(positionId) || positionId <= 0) {
+        throw new Error('positionId must be a positive integer');
+    }
+    if (typeof candidateId !== 'number' || !Number.isInteger(candidateId) || candidateId <= 0) {
+        throw new Error('candidateId must be a positive integer');
+    }
+};

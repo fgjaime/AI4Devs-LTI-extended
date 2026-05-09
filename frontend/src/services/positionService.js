@@ -51,6 +51,15 @@ export const positionService = {
     }
   },
 
+  removeCandidateFromPosition: async (positionId, candidateId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/positions/${positionId}/candidates/${candidateId}`);
+    } catch (error) {
+      console.error('Error removing candidate from position:', error);
+      const message = error.response?.data?.error ?? error.response?.data?.message ?? error.message ?? 'Error removing candidate from position';
+      const err = new Error(message);
+      throw err;
+    }
   // Assign existing candidate to a position
   assignCandidateToPosition: async (positionId, payload) => {
     try {

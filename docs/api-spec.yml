@@ -396,6 +396,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssignCandidateErrorResponse'
 
+  /positions/{positionId}/candidates/{candidateId}:
+    delete:
+      summary: Remove candidate application from position
+      description: Remove the candidate-position application relationship for the provided IDs
+      tags:
+        - Positions
+      parameters:
+        - in: path
+          name: positionId
+          required: true
+          schema:
+            type: integer
+          description: Position ID
+        - in: path
+          name: candidateId
+          required: true
+          schema:
+            type: integer
+          description: Candidate ID
+      responses:
+        '204':
+          description: Relationship removed successfully
+        '400':
+          description: Invalid path parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Position, candidate, or relationship not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Deletion blocked by domain constraints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /positions/{id}/candidates/names:
     get:
       summary: Get candidate names by position

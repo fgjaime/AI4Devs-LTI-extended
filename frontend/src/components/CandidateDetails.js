@@ -3,6 +3,7 @@ import { Offcanvas, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { Pencil, Trash } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { createInterview, updateInterview, deleteInterview } from '../services/interviewService';
+import { positionService } from '../services/positionService';
 import './CandidateDetails.css';
 
 const API_BASE_URL = 'http://localhost:3010';
@@ -50,7 +51,7 @@ const isoToDatetimeLocal = (isoString) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const CandidateDetails = ({ candidate, onClose }) => {
+const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
   const { t } = useTranslation();
   const [candidateDetails, setCandidateDetails] = useState(null);
   const [employees, setEmployees] = useState([]);
@@ -75,6 +76,9 @@ const CandidateDetails = ({ candidate, onClose }) => {
   const [deleteReason, setDeleteReason] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [removeApplicationModal, setRemoveApplicationModal] = useState(null);
+  const [removeApplicationLoading, setRemoveApplicationLoading] = useState(false);
+  const [removeApplicationError, setRemoveApplicationError] = useState(null);
 
   useEffect(() => {
     if (candidate) {
@@ -220,6 +224,50 @@ const CandidateDetails = ({ candidate, onClose }) => {
     setDeleteModalApplication(null);
     setDeleteReason('');
     setDeleteError(null);
+  };
+
+  const openRemoveApplicationModal = (application) => {
+    setRemoveApplicationModal(application);
+    setRemoveApplicationError(null);
+  };
+
+  const closeRemoveApplicationModal = () => {
+    if (removeApplicationLoading) return;
+    setRemoveApplicationModal(null);
+    setRemoveApplicationError(null);
+  };
+
+  const handleRemoveApplicationConfirm = async () => {
+    if (!removeApplicationModal || !candidate) return;
+    const positionId = removeApplicationModal.position?.id;
+    if (!positionId) {
+      setRemoveApplicationError('Position ID not found for this application');
+      return;
+    }
+
+    setRemoveApplicationLoading(true);
+    setRemoveApplicationError(null);
+    try {
+      await positionService.removeCandidateFromPosition(positionId, candidate.id);
+      setSuccessMessage('Application removed successfully');
+      const refreshed = await fetch(`${API_BASE_URL}/candidates/${candidate.id}`).then((response) => response.json());
+      setCandidateDetails(refreshed);
+      setFormData((prev) => {
+        const stillExists = refreshed?.applications?.some((app) => String(app.id) === prev.applicationId);
+        return stillExists ? prev : { ...prev, applicationId: '', interviewStepId: '' };
+      });
+      setInterviewSteps([]);
+      closeRemoveApplicationModal();
+      if (typeof onApplicationRemoved === 'function') {
+        await onApplicationRemoved();
+      } else {
+        onClose();
+      }
+    } catch (err) {
+      setRemoveApplicationError(err.message || 'Failed to remove application');
+    } finally {
+      setRemoveApplicationLoading(false);
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -460,7 +508,17 @@ const CandidateDetails = ({ candidate, onClose }) => {
             {applications.length ? (
               applications.map((app) => (
                 <div key={app.id} className="mb-4">
-                  <p>{t('candidates.details.position')} {app.position?.title}</p>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <p className="mb-1">{t('candidates.details.position')} {app.position?.title}</p>
+                    <Button
+                      variant="link"
+                      className="p-1 text-danger text-decoration-none"
+                      onClick={() => openRemoveApplicationModal(app)}
+                      aria-label="Remove application"
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  </div>
                   <p>{t('candidates.details.applicationDate')} {new Date(app.applicationDate).toLocaleDateString()}</p>
                   <h5 className="mt-3 mb-2">{t('candidates.details.interviews')}</h5>
                   {app.interviews?.length ? (
@@ -914,6 +972,28 @@ const CandidateDetails = ({ candidate, onClose }) => {
                   </Button>
                 </div>
               </Modal.Body>
+            </Modal>
+
+            <Modal show={!!removeApplicationModal} onHide={closeRemoveApplicationModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Remove application</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {removeApplicationError && <Alert variant="danger">{removeApplicationError}</Alert>}
+                <p>
+                  Are you sure you want to remove the application to{' '}
+                  <strong>{removeApplicationModal?.position?.title ?? 'this position'}</strong>?
+                </p>
+                <p className="mb-0 text-muted">This action cannot be undone from this panel.</p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={closeRemoveApplicationModal} disabled={removeApplicationLoading}>
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={handleRemoveApplicationConfirm} disabled={removeApplicationLoading}>
+                  {removeApplicationLoading ? 'Removing...' : 'Remove'}
+                </Button>
+              </Modal.Footer>
             </Modal>
           </>
         )}
