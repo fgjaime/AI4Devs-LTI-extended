@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { getCandidatesByPositionService, getInterviewFlowByPositionService, getAllPositionsService, getCandidateNamesByPositionService, getPositionByIdService, updatePositionService } from '../../application/services/positionService';
-import { validatePositionUpdateData } from '../../application/validator';
+import { getCandidatesByPositionService, getInterviewFlowByPositionService, getAllPositionsService, getCandidateNamesByPositionService, getPositionByIdService, updatePositionService, removeCandidateFromPositionService } from '../../application/services/positionService';
+import { validatePositionUpdateData, validateCandidatePositionDeletion } from '../../application/validator';
 
 
 export const getAllPositions = async (req: Request, res: Response) => {
@@ -128,6 +128,44 @@ export const updatePosition = async (req: Request, res: Response) => {
         res.status(500).json({
             message: 'Error updating position',
             error: String(error)
+        });
+    }
+};
+
+export const removeCandidateFromPosition = async (req: Request, res: Response) => {
+    try {
+        const positionId = parseInt(req.params.positionId, 10);
+        const candidateId = parseInt(req.params.candidateId, 10);
+
+        try {
+            validateCandidatePositionDeletion(positionId, candidateId);
+        } catch (validationError) {
+            const message = validationError instanceof Error ? validationError.message : String(validationError);
+            return res.status(400).json({
+                message: 'Validation error',
+                error: message
+            });
+        }
+
+        await removeCandidateFromPositionService(positionId, candidateId);
+        return res.status(204).send();
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message === 'Position or candidate not found' || message === 'Application relation not found') {
+            return res.status(404).json({
+                message: 'Not found',
+                error: message
+            });
+        }
+        if (message === 'Cannot remove application relation') {
+            return res.status(409).json({
+                message: 'Conflict',
+                error: message
+            });
+        }
+        return res.status(500).json({
+            message: 'Error removing candidate from position',
+            error: message
         });
     }
 };

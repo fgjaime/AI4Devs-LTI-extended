@@ -152,3 +152,27 @@ export const updatePositionService = async (positionId: number, updateData: Reco
         throw new Error('Error updating position');
     }
 };
+
+export const removeCandidateFromPositionService = async (positionId: number, candidateId: number): Promise<void> => {
+    const [position, candidate] = await Promise.all([
+        prisma.position.findUnique({ where: { id: positionId } }),
+        prisma.candidate.findUnique({ where: { id: candidateId } })
+    ]);
+
+    if (!position || !candidate) {
+        throw new Error('Position or candidate not found');
+    }
+
+    const existingApplication = await prisma.application.findFirst({
+        where: { positionId, candidateId },
+        select: { id: true }
+    });
+
+    if (!existingApplication) {
+        throw new Error('Application relation not found');
+    }
+
+    await prisma.application.delete({
+        where: { id: existingApplication.id }
+    });
+};

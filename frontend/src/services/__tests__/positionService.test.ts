@@ -2,20 +2,25 @@ jest.mock('axios', () => ({
   default: {
     get: jest.fn(),
     patch: jest.fn(),
+    delete: jest.fn(),
   },
   get: jest.fn(),
   patch: jest.fn(),
+  delete: jest.fn(),
 }));
 
 import { positionService } from '../positionService';
 
 const mockAxiosGet = jest.fn();
+const mockAxiosDelete = jest.fn();
 
 beforeAll(() => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const axiosMock = require('axios');
   axiosMock.default.get = mockAxiosGet;
   axiosMock.get = mockAxiosGet;
+  axiosMock.default.delete = mockAxiosDelete;
+  axiosMock.delete = mockAxiosDelete;
 });
 
 const basePosition = {
@@ -30,6 +35,7 @@ const basePosition = {
 describe('positionService — legacy status normalization', () => {
   beforeEach(() => {
     mockAxiosGet.mockReset();
+    mockAxiosDelete.mockReset();
   });
 
   describe('getAllPositions', () => {
@@ -77,6 +83,14 @@ describe('positionService — legacy status normalization', () => {
       mockAxiosGet.mockResolvedValue({ data: { ...basePosition, status: 'Borrador' } });
       const position = await positionService.getPositionById(1);
       expect(position.status).toBe('Draft');
+    });
+  });
+
+  describe('removeCandidateFromPosition', () => {
+    it('calls delete endpoint with position and candidate ids', async () => {
+      mockAxiosDelete.mockResolvedValue({ status: 204 });
+      await positionService.removeCandidateFromPosition(11, 22);
+      expect(mockAxiosDelete).toHaveBeenCalledWith('http://localhost:3010/positions/11/candidates/22');
     });
   });
 });
