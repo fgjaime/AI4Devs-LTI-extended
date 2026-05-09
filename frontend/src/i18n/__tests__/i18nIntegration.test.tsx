@@ -38,9 +38,15 @@ describe('RecruiterDashboard i18n', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Candidates' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Positions' })).toBeInTheDocument();
     expect(
-      screen.getByText('Create applicant profiles and manage candidate records.')
+      screen.getByText(
+        'Add new applicants or open the full list with search, sort, and pagination.'
+      )
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Add New Candidate' })).toHaveAttribute('href', '/add-candidate');
+    expect(screen.getByRole('link', { name: 'Add New Candidate' })).toHaveAttribute(
+      'href',
+      '/add-candidate'
+    );
+    expect(screen.getByRole('link', { name: 'Go to Candidates' })).toHaveAttribute('href', '/candidates');
     expect(screen.getByRole('link', { name: 'Go to Positions' })).toHaveAttribute('href', '/positions');
   });
 
@@ -56,11 +62,16 @@ describe('RecruiterDashboard i18n', () => {
     expect(screen.getByText('Dashboard del Reclutador')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Candidatos' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Posiciones' })).toBeInTheDocument();
-    expect(screen.getByText('Crea fichas de candidatos y gestiona sus datos.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Añade nuevos candidatos o abre el listado completo con búsqueda, orden y paginación.'
+      )
+    ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Añadir Nuevo Candidato' })).toHaveAttribute(
       'href',
       '/add-candidate'
     );
+    expect(screen.getByRole('link', { name: 'Ir a Candidatos' })).toHaveAttribute('href', '/candidates');
     expect(screen.getByRole('link', { name: 'Ir a Posiciones' })).toHaveAttribute('href', '/positions');
   });
 });

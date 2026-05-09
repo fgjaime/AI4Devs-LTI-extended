@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Briefcase, PersonBadge } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -25,18 +25,32 @@ const RecruiterDashboard = () => {
                             {t('dashboard.sections.candidates.heading')}
                         </h2>
                         <p className="text-muted small mb-3">{t('dashboard.sections.candidates.lead')}</p>
-                        <Card className="shadow-sm border-0 h-100">
-                            <Card.Body className="p-4">
-                                <p className="fw-semibold text-secondary mb-3 mb-md-4">
-                                    {t('dashboard.candidates.title')}
-                                </p>
-                                <Link to="/add-candidate" className="text-decoration-none">
-                                    <Button variant="primary" className="w-100">
-                                        {t('dashboard.candidates.button')}
-                                    </Button>
-                                </Link>
-                            </Card.Body>
-                        </Card>
+                        <Stack gap={3}>
+                            <Card className="shadow-sm border-0">
+                                <Card.Body className="p-4">
+                                    <p className="fw-semibold text-secondary mb-3 mb-md-4">
+                                        {t('dashboard.candidates.title')}
+                                    </p>
+                                    <Link to="/add-candidate" className="text-decoration-none">
+                                        <Button variant="primary" className="w-100">
+                                            {t('dashboard.candidates.button')}
+                                        </Button>
+                                    </Link>
+                                </Card.Body>
+                            </Card>
+                            <Card className="shadow-sm border-0">
+                                <Card.Body className="p-4">
+                                    <p className="fw-semibold text-secondary mb-3 mb-md-4">
+                                        {t('dashboard.viewCandidates.title')}
+                                    </p>
+                                    <Link to="/candidates" className="text-decoration-none">
+                                        <Button variant="primary" className="w-100">
+                                            {t('dashboard.viewCandidates.button')}
+                                        </Button>
+                                    </Link>
+                                </Card.Body>
+                            </Card>
+                        </Stack>
                     </section>
                 </Col>
                 <Col xs={12} md={6} lg={5}>

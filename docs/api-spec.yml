@@ -561,6 +561,7 @@ components:
 
     Candidate:
       type: object
+      description: Candidate list item returned by `GET /candidates`. Heavy relations (`educations`, `workExperiences`, `resumes`) are intentionally excluded from the list payload and only available on `GET /candidates/{id}`.
       properties:
         id:
           type: integer
@@ -583,26 +584,75 @@ components:
           type: string
           nullable: true
           description: Candidate's address
-        educations:
+        activeProcesses:
           type: array
           items:
-            $ref: '#/components/schemas/Education'
-        workExperiences:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkExperience'
-        resumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Resume'
-        applications:
-          type: array
-          items:
-            $ref: '#/components/schemas/Application'
+            $ref: '#/components/schemas/ActiveProcess'
+          description: All applications on positions with `status === "Open"`, ordered by applicationDate desc. Empty array when none.
       required:
+        - id
         - firstName
         - lastName
         - email
+        - activeProcesses
+
+    ActiveProcess:
+      type: object
+      description: Derived snapshot of the candidate's currently active hiring process.
+      properties:
+        applicationId:
+          type: integer
+          description: Identifier of the underlying Application
+        applicationDate:
+          type: string
+          format: date-time
+          description: ISO-8601 application date
+        position:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            status:
+              type: string
+            company:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+              required:
+                - id
+                - name
+          required:
+            - id
+            - title
+            - status
+            - company
+        currentStep:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            orderIndex:
+              type: integer
+          required:
+            - id
+            - name
+            - orderIndex
+        totalSteps:
+          type: integer
+          description: Total number of steps in the position's interview flow
+      required:
+        - applicationId
+        - applicationDate
+        - position
+        - currentStep
+        - totalSteps
 
     CandidateDetails:
       allOf:
