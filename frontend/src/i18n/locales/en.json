@@ -12,6 +12,16 @@
   "dashboard": {
     "title": "Recruiter Dashboard",
     "logoAlt": "LTI Logo",
+    "sections": {
+      "candidates": {
+        "heading": "Candidates",
+        "lead": "Add new applicants or open the full list with search, sort, and pagination."
+      },
+      "positions": {
+        "heading": "Positions",
+        "lead": "Open roles, pipelines, and position details."
+      }
+    },
     "candidates": {
       "title": "Add Candidate",
       "button": "Add New Candidate"
