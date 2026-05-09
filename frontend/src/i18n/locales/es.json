@@ -134,6 +134,32 @@
       "edit": "Editar",
       "viewProcess": "Ver proceso"
     },
+    "addCandidate": {
+      "button": "Añadir candidato",
+      "modalTitle": "Añadir candidato a este proceso",
+      "searchLabel": "Buscar candidato",
+      "searchPlaceholder": "Escribe un nombre o correo...",
+      "searchEmpty": "No se encontraron candidatos",
+      "searchLoading": "Buscando...",
+      "selected": "Seleccionado",
+      "notesLabel": "Notas (opcional)",
+      "notesPlaceholder": "Notas opcionales sobre el candidato (máx. 500 caracteres)",
+      "notesCounter": "{{current}}/{{max}}",
+      "notesTooLong": "Las notas no pueden superar los 500 caracteres",
+      "submit": "Añadir al proceso",
+      "submitting": "Añadiendo...",
+      "cancel": "Cancelar",
+      "successToast": "Candidato añadido al proceso",
+      "errors": {
+        "duplicate": "Este candidato ya está asignado a esta posición",
+        "positionClosed": "La posición está cerrada y no admite nuevos candidatos",
+        "noInterviewSteps": "La posición no tiene pasos de entrevista configurados",
+        "positionNotFound": "Posición no encontrada",
+        "candidateNotFound": "Candidato no encontrado",
+        "validation": "Revisa el formulario e inténtalo de nuevo",
+        "unknown": "No se pudo añadir el candidato. Inténtalo de nuevo."
+      }
+    },
     "edit": {
       "title": "Editar Posición",
       "backToPositions": "← Volver a Posiciones",

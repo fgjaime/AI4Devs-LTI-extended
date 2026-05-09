@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { getCandidatesByPositionService, getInterviewFlowByPositionService, getAllPositionsService, getCandidateNamesByPositionService, getPositionByIdService, updatePositionService } from '../../application/services/positionService';
-import { validatePositionUpdateData } from '../../application/validator';
+import { getCandidatesByPositionService, getInterviewFlowByPositionService, getAllPositionsService, getCandidateNamesByPositionService, getPositionByIdService, updatePositionService, removeCandidateFromPositionService,AssignCandidateError } from '../../application/services/positionService';
+import { validatePositionUpdateData, validateCandidatePositionDeletion } from '../../application/validator';
+
 
 
 export const getAllPositions = async (req: Request, res: Response) => {
@@ -90,6 +91,59 @@ export const getCandidateNamesByPosition = async (req: Request, res: Response) =
     }
 };
 
+const ASSIGN_CANDIDATE_STATUS_MAP: Record<string, number> = {
+    POSITION_NOT_FOUND: 404,
+    CANDIDATE_NOT_FOUND: 404,
+    POSITION_CLOSED: 409,
+    DUPLICATE_APPLICATION: 409,
+    NO_INTERVIEW_STEPS: 422,
+};
+
+export const addCandidateToPosition = async (req: Request, res: Response) => {
+    try {
+        const positionId = parseInt(req.params.id);
+        if (isNaN(positionId)) {
+            return res.status(400).json({
+                code: 'VALIDATION_ERROR',
+                message: 'Invalid position ID format',
+                error: 'Position ID must be a valid number',
+            });
+        }
+
+        try {
+            validateAssignCandidateToPositionData(req.body);
+        } catch (validationError) {
+            const message = validationError instanceof Error ? validationError.message : String(validationError);
+            return res.status(400).json({
+                code: 'VALIDATION_ERROR',
+                message: 'Validation error',
+                error: message,
+            });
+        }
+
+        const created = await assignCandidateToPositionService(positionId, {
+            candidateId: req.body.candidateId,
+            notes: req.body.notes,
+        });
+        return res.status(201).json(created);
+    } catch (error) {
+        if (error instanceof AssignCandidateError) {
+            const status = ASSIGN_CANDIDATE_STATUS_MAP[error.code] ?? 500;
+            return res.status(status).json({
+                code: error.code,
+                message: error.message,
+                error: error.message,
+            });
+        }
+        const message = error instanceof Error ? error.message : String(error);
+        return res.status(500).json({
+            code: 'INTERNAL_ERROR',
+            message: 'Error assigning candidate to position',
+            error: message,
+        });
+    }
+};
+
 export const updatePosition = async (req: Request, res: Response) => {
     try {
         const positionId = parseInt(req.params.id);
@@ -128,6 +182,44 @@ export const updatePosition = async (req: Request, res: Response) => {
         res.status(500).json({
             message: 'Error updating position',
             error: String(error)
+        });
+    }
+};
+
+export const removeCandidateFromPosition = async (req: Request, res: Response) => {
+    try {
+        const positionId = parseInt(req.params.positionId, 10);
+        const candidateId = parseInt(req.params.candidateId, 10);
+
+        try {
+            validateCandidatePositionDeletion(positionId, candidateId);
+        } catch (validationError) {
+            const message = validationError instanceof Error ? validationError.message : String(validationError);
+            return res.status(400).json({
+                message: 'Validation error',
+                error: message
+            });
+        }
+
+        await removeCandidateFromPositionService(positionId, candidateId);
+        return res.status(204).send();
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message === 'Position or candidate not found' || message === 'Application relation not found') {
+            return res.status(404).json({
+                message: 'Not found',
+                error: message
+            });
+        }
+        if (message === 'Cannot remove application relation') {
+            return res.status(409).json({
+                message: 'Conflict',
+                error: message
+            });
+        }
+        return res.status(500).json({
+            message: 'Error removing candidate from position',
+            error: message
         });
     }
 };

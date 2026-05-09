@@ -561,17 +561,15 @@ describe('Candidate Controllers', () => {
                 expect(mockStatus).toHaveBeenCalledWith(404);
             });
 
-            it('debería manejar ID negativo como válido numéricamente', async () => {
+            it('debería rechazar ID negativo como formato inválido', async () => {
                 mockRequest = {
                     params: { id: '-1' }
                 };
 
-                mockFindCandidateById.mockResolvedValue(null);
-
                 await getCandidateById(mockRequest as Request, mockResponse as Response);
 
-                expect(mockFindCandidateById).toHaveBeenCalledWith(-1);
-                expect(mockStatus).toHaveBeenCalledWith(404);
+                expect(mockFindCandidateById).not.toHaveBeenCalled();
+                expect(mockStatus).toHaveBeenCalledWith(400);
             });
 
             it('debería manejar ID muy grande', async () => {
@@ -587,32 +585,26 @@ describe('Candidate Controllers', () => {
                 expect(mockStatus).toHaveBeenCalledWith(404);
             });
 
-            it('debería aceptar números decimales como válidos (parseInt los convierte)', async () => {
+            it('debería rechazar números decimales como formato inválido', async () => {
                 mockRequest = {
                     params: { id: '1.9' }
                 };
 
-                mockFindCandidateById.mockResolvedValue(null);
-
                 await getCandidateById(mockRequest as Request, mockResponse as Response);
 
-                // parseInt('1.9') = 1, que es válido
-                expect(mockFindCandidateById).toHaveBeenCalledWith(1);
-                expect(mockStatus).toHaveBeenCalledWith(404);
+                expect(mockFindCandidateById).not.toHaveBeenCalled();
+                expect(mockStatus).toHaveBeenCalledWith(400);
             });
 
-            it('debería aceptar notación científica como válida (parseInt la convierte)', async () => {
+            it('debería rechazar notación científica como formato inválido', async () => {
                 mockRequest = {
                     params: { id: '1e2' }
                 };
 
-                mockFindCandidateById.mockResolvedValue(null);
-
                 await getCandidateById(mockRequest as Request, mockResponse as Response);
 
-                // parseInt('1e2') = 1, que es válido
-                expect(mockFindCandidateById).toHaveBeenCalledWith(1);
-                expect(mockStatus).toHaveBeenCalledWith(404);
+                expect(mockFindCandidateById).not.toHaveBeenCalled();
+                expect(mockStatus).toHaveBeenCalledWith(400);
             });
         });
     });

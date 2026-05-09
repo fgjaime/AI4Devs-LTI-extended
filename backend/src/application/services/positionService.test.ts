@@ -1,4 +1,4 @@
-import { getCandidatesByPositionService, updatePositionService } from './positionService';
+import { getCandidatesByPositionService, updatePositionService, removeCandidateFromPositionService } from './positionService';
 import { PrismaClient } from '@prisma/client';
 import { Position } from '../../domain/models/Position';
 
@@ -6,8 +6,16 @@ const prisma = new PrismaClient();
 
 jest.mock('@prisma/client', () => {
   const mockPrisma = {
+    position: {
+      findUnique: jest.fn(),
+    },
+    candidate: {
+      findUnique: jest.fn(),
+    },
     application: {
       findMany: jest.fn(),
+      findFirst: jest.fn(),
+      delete: jest.fn(),
     },
   };
   return { PrismaClient: jest.fn(() => mockPrisma) };
@@ -123,6 +131,30 @@ describe('updatePositionService', () => {
     ).rejects.toThrow('salaryMax must be greater than or equal to salaryMin');
 
     expect(mockSave).not.toHaveBeenCalled();
+  });
+});
+
+describe('removeCandidateFromPositionService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should remove existing candidate-position relationship', async () => {
+    jest.spyOn(prisma.position, 'findUnique').mockResolvedValue({ id: 10 } as any);
+    jest.spyOn(prisma.candidate, 'findUnique').mockResolvedValue({ id: 20 } as any);
+    jest.spyOn(prisma.application, 'findFirst').mockResolvedValue({ id: 100 } as any);
+    const deleteSpy = jest.spyOn(prisma.application, 'delete').mockResolvedValue({ id: 100 } as any);
+
+    await expect(removeCandidateFromPositionService(10, 20)).resolves.toBeUndefined();
+    expect(deleteSpy).toHaveBeenCalledWith({ where: { id: 100 } });
+  });
+
+  it('should throw not found when relation does not exist', async () => {
+    jest.spyOn(prisma.position, 'findUnique').mockResolvedValue({ id: 10 } as any);
+    jest.spyOn(prisma.candidate, 'findUnique').mockResolvedValue({ id: 20 } as any);
+    jest.spyOn(prisma.application, 'findFirst').mockResolvedValue(null as any);
+
+    await expect(removeCandidateFromPositionService(10, 20)).rejects.toThrow('Application relation not found');
   });
 });
 

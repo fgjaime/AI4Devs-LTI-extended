@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Offcanvas, Button } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import StageColumn from './StageColumn';
 import CandidateDetails from './CandidateDetails';
+import AddCandidateToPositionModal from './AddCandidateToPositionModal';
 import { useNavigate } from 'react-router-dom';
 
 const PositionsDetails = () => {
@@ -13,10 +14,11 @@ const PositionsDetails = () => {
     const [stages, setStages] = useState([]);
     const [positionName, setPositionName] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [showAddCandidate, setShowAddCandidate] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchInterviewFlow = async () => {
+    const fetchInterviewFlow = useCallback(async () => {
             try {
                 const response = await fetch(`http://localhost:3010/positions/${id}/interviewFlow`);
                 const data = await response.json();
@@ -27,17 +29,19 @@ const PositionsDetails = () => {
                 }));
                 setStages(interviewSteps);
                 setPositionName(data.interviewFlow.positionName);
+                return interviewSteps;
             } catch (error) {
                 console.error('Error fetching interview flow:', error);
+                return [];
             }
-        };
+        }, [id]);
 
-        const fetchCandidates = async () => {
+    const fetchCandidates = useCallback(async (baseStages) => {
             try {
                 const response = await fetch(`http://localhost:3010/positions/${id}/candidates`);
                 const candidates = await response.json();
-                setStages(prevStages =>
-                    prevStages.map(stage => ({
+                const mapCandidatesToStages = (stagesToPopulate) =>
+                    stagesToPopulate.map(stage => ({
                         ...stage,
                         candidates: candidates
                             .filter(candidate => candidate.currentInterviewStep === stage.title)
@@ -47,16 +51,26 @@ const PositionsDetails = () => {
                                 rating: candidate.averageScore,
                                 applicationId: candidate.applicationId
                             }))
-                    }))
-                );
+                    }));
+
+                if (Array.isArray(baseStages) && baseStages.length > 0) {
+                    setStages(mapCandidatesToStages(baseStages));
+                    return;
+                }
+
+                setStages(prevStages => mapCandidatesToStages(prevStages));
             } catch (error) {
                 console.error('Error fetching candidates:', error);
             }
-        };
+        }, [id]);
 
-        fetchInterviewFlow();
-        fetchCandidates();
-    }, [id]);
+useEffect(() => {
+        const loadBoard = async () => {
+            const interviewStages = await fetchInterviewFlow();
+            await fetchCandidates(interviewStages);
+        };
+        loadBoard();
+    }, [fetchInterviewFlow, fetchCandidates, refreshKey]);
 
     const updateCandidateStep = async (candidateId, applicationId, newStep) => {
         try {
@@ -128,12 +142,28 @@ const PositionsDetails = () => {
         setSelectedCandidate(null);
     };
 
+    const handleApplicationRemoved = async () => {
+        setSelectedCandidate(null);
+        await fetchCandidates();
+    };
+
     return (
         <Container className="mt-5">
             <Button variant="link" onClick={() => navigate('/positions')} className="mb-3">
                 {t('positions.backToPositions')}
             </Button>
-            <h2 className="text-center mb-4">{positionName}</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="m-0">{positionName}</h2>
+                <Button variant="primary" onClick={() => setShowAddCandidate(true)}>
+                    {t('positions.addCandidate.button')}
+                </Button>
+            </div>
+            <AddCandidateToPositionModal
+                show={showAddCandidate}
+                positionId={id}
+                onClose={() => setShowAddCandidate(false)}
+                onSuccess={() => setRefreshKey((k) => k + 1)}
+            />
             <DragDropContext onDragEnd={onDragEnd}>
                 <Row>
                     {stages.map((stage, index) => (
@@ -141,7 +171,11 @@ const PositionsDetails = () => {
                     ))}
                 </Row>
             </DragDropContext>
-            <CandidateDetails candidate={selectedCandidate} onClose={closeSlide} />
+            <CandidateDetails
+                candidate={selectedCandidate}
+                onClose={closeSlide}
+                onApplicationRemoved={handleApplicationRemoved}
+            />
         </Container>
     );
 };

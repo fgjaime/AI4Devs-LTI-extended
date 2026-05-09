@@ -141,3 +141,13 @@ The system SHALL log all interview deletion operations for audit purposes. The l
 - **WHEN** an interview is successfully deleted
 - **THEN** the system SHALL log the deletion event with interview ID, candidate ID, deletion reason, and timestamp
 - **AND** the log entry SHALL be accessible for audit purposes
+
+---
+
+### Requirement: Delete interview modal remains correctly layered with wider candidate pane
+The system SHALL keep delete interview confirmation modal behavior and layering intact when candidate details pane width increases responsively.
+
+#### Scenario: Delete confirmation modal appears above widened pane
+- **WHEN** a recruiter opens the delete interview confirmation from the candidate details pane on tablet or desktop viewports
+- **THEN** the modal overlays above the offcanvas
+- **AND** confirm/cancel actions remain fully visible and clickable

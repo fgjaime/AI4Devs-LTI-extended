@@ -41,4 +41,22 @@ export const getCandidates = async ({ page = 1, limit = 10, search = '', sort = 
 
     const response = await axios.get(`http://localhost:3010/candidates?${params.toString()}`);
     return response.data;
+// Search candidates by partial first/last name or email match (client-side filter on top of GET /candidates)
+export const searchCandidates = async (query) => {
+    const response = await axios.get('http://localhost:3010/candidates');
+    const body = response.data;
+    const candidates = Array.isArray(body)
+        ? body
+        : Array.isArray(body?.data)
+            ? body.data
+            : [];
+    const trimmed = (query ?? '').trim().toLowerCase();
+    if (!trimmed) {
+        return candidates;
+    }
+    return candidates.filter((c) => {
+        const fullName = `${c.firstName ?? ''} ${c.lastName ?? ''}`.toLowerCase();
+        const email = (c.email ?? '').toLowerCase();
+        return fullName.includes(trimmed) || email.includes(trimmed);
+    });
 };

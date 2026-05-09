@@ -134,6 +134,32 @@
       "edit": "Edit",
       "viewProcess": "View process"
     },
+    "addCandidate": {
+      "button": "Add candidate",
+      "modalTitle": "Add candidate to this process",
+      "searchLabel": "Search candidate",
+      "searchPlaceholder": "Type a name or email...",
+      "searchEmpty": "No candidates found",
+      "searchLoading": "Searching...",
+      "selected": "Selected",
+      "notesLabel": "Notes (optional)",
+      "notesPlaceholder": "Optional notes about this candidate (max 500 characters)",
+      "notesCounter": "{{current}}/{{max}}",
+      "notesTooLong": "Notes must not exceed 500 characters",
+      "submit": "Add to process",
+      "submitting": "Adding...",
+      "cancel": "Cancel",
+      "successToast": "Candidate added to the process",
+      "errors": {
+        "duplicate": "This candidate is already assigned to this position",
+        "positionClosed": "The position is closed and cannot accept new candidates",
+        "noInterviewSteps": "The position has no configured interview steps",
+        "positionNotFound": "Position not found",
+        "candidateNotFound": "Candidate not found",
+        "validation": "Please review the form and try again",
+        "unknown": "Could not add the candidate. Please try again."
+      }
+    },
     "edit": {
       "title": "Edit Position",
       "backToPositions": "← Back to Positions",

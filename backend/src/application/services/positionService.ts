@@ -3,6 +3,108 @@ import { Position } from '../../domain/models/Position';
 
 const prisma = new PrismaClient();
 
+export type AssignCandidateErrorCode =
+    | 'POSITION_NOT_FOUND'
+    | 'CANDIDATE_NOT_FOUND'
+    | 'POSITION_CLOSED'
+    | 'NO_INTERVIEW_STEPS'
+    | 'DUPLICATE_APPLICATION';
+
+export class AssignCandidateError extends Error {
+    public readonly code: AssignCandidateErrorCode;
+
+    constructor(code: AssignCandidateErrorCode, message: string) {
+        super(message);
+        this.code = code;
+        this.name = 'AssignCandidateError';
+        Object.setPrototypeOf(this, AssignCandidateError.prototype);
+    }
+}
+
+const CLOSED_POSITION_STATUSES = ['Closed', 'Hired'];
+
+export interface AssignCandidatePayload {
+    candidateId: number;
+    notes?: string | null;
+}
+
+export const assignCandidateToPositionService = async (
+    positionId: number,
+    payload: AssignCandidatePayload,
+) => {
+    return prisma.$transaction(async (tx: any) => {
+        const position = await tx.position.findUnique({
+            where: { id: positionId },
+            include: {
+                interviewFlow: {
+                    include: {
+                        interviewSteps: { orderBy: { orderIndex: 'asc' } },
+                    },
+                },
+            },
+        });
+
+        if (!position) {
+            throw new AssignCandidateError('POSITION_NOT_FOUND', `Position ${positionId} not found`);
+        }
+
+        if (CLOSED_POSITION_STATUSES.includes(position.status)) {
+            throw new AssignCandidateError(
+                'POSITION_CLOSED',
+                `Position ${positionId} is ${position.status} and cannot accept candidates`,
+            );
+        }
+
+        const candidate = await tx.candidate.findUnique({ where: { id: payload.candidateId } });
+        if (!candidate) {
+            throw new AssignCandidateError(
+                'CANDIDATE_NOT_FOUND',
+                `Candidate ${payload.candidateId} not found`,
+            );
+        }
+
+        const steps = position.interviewFlow?.interviewSteps ?? [];
+        if (steps.length === 0) {
+            throw new AssignCandidateError(
+                'NO_INTERVIEW_STEPS',
+                `Position ${positionId} has no configured interview steps`,
+            );
+        }
+
+        const firstStep = steps[0];
+
+        const existing = await tx.application.findFirst({
+            where: { positionId, candidateId: payload.candidateId },
+        });
+        if (existing) {
+            throw new AssignCandidateError(
+                'DUPLICATE_APPLICATION',
+                `Candidate ${payload.candidateId} is already assigned to position ${positionId}`,
+            );
+        }
+
+        const created = await tx.application.create({
+            data: {
+                positionId,
+                candidateId: payload.candidateId,
+                applicationDate: new Date(),
+                currentInterviewStep: firstStep.id,
+                notes: payload.notes ?? null,
+            },
+        });
+
+        return {
+            id: created.id,
+            positionId: created.positionId,
+            candidateId: created.candidateId,
+            applicationDate: created.applicationDate,
+            currentInterviewStep: created.currentInterviewStep,
+            interviewStepId: created.currentInterviewStep,
+            notes: created.notes,
+        };
+    });
+};
+
 const calculateAverageScore = (interviews: any[]) => {
     if (interviews.length === 0) return 0;
     const totalScore = interviews.reduce((acc, interview) => acc + (interview.score || 0), 0);
@@ -151,4 +253,28 @@ export const updatePositionService = async (positionId: number, updateData: Reco
         console.error('Error updating position:', error);
         throw new Error('Error updating position');
     }
+};
+
+export const removeCandidateFromPositionService = async (positionId: number, candidateId: number): Promise<void> => {
+    const [position, candidate] = await Promise.all([
+        prisma.position.findUnique({ where: { id: positionId } }),
+        prisma.candidate.findUnique({ where: { id: candidateId } })
+    ]);
+
+    if (!position || !candidate) {
+        throw new Error('Position or candidate not found');
+    }
+
+    const existingApplication = await prisma.application.findFirst({
+        where: { positionId, candidateId },
+        select: { id: true }
+    });
+
+    if (!existingApplication) {
+        throw new Error('Application relation not found');
+    }
+
+    await prisma.application.delete({
+        where: { id: existingApplication.id }
+    });
 };

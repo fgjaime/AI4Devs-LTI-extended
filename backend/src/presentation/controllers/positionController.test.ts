@@ -1,7 +1,7 @@
-import { getCandidatesByPosition, updatePosition } from './positionController';
+import { getCandidatesByPosition, updatePosition, removeCandidateFromPosition } from './positionController';
 import { Request, Response } from 'express';
-import { getCandidatesByPositionService, updatePositionService } from '../../application/services/positionService';
-import { validatePositionUpdateData } from '../../application/validator';
+import { getCandidatesByPositionService, updatePositionService, removeCandidateFromPositionService } from '../../application/services/positionService';
+import { validatePositionUpdateData, validateCandidatePositionDeletion } from '../../application/validator';
 
 jest.mock('../../application/services/positionService');
 jest.mock('../../application/validator');
@@ -374,5 +374,52 @@ describe('updatePosition', () => {
       message: 'Error updating position',
       error: 'Database error',
     });
+  });
+});
+
+describe('removeCandidateFromPosition', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let mockStatus: jest.Mock;
+  let mockJson: jest.Mock;
+  let mockSend: jest.Mock;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockStatus = jest.fn().mockReturnThis();
+    mockJson = jest.fn();
+    mockSend = jest.fn();
+    mockResponse = { status: mockStatus, json: mockJson, send: mockSend };
+  });
+
+  it('should return 204 on successful deletion', async () => {
+    mockRequest = { params: { positionId: '1', candidateId: '2' } };
+    (validateCandidatePositionDeletion as jest.Mock).mockImplementation(() => {});
+    (removeCandidateFromPositionService as jest.Mock).mockResolvedValue(undefined);
+
+    await removeCandidateFromPosition(mockRequest as Request, mockResponse as Response);
+
+    expect(removeCandidateFromPositionService).toHaveBeenCalledWith(1, 2);
+    expect(mockStatus).toHaveBeenCalledWith(204);
+    expect(mockSend).toHaveBeenCalled();
+  });
+
+  it('should return 400 on validation error', async () => {
+    mockRequest = { params: { positionId: 'x', candidateId: '2' } };
+    (validateCandidatePositionDeletion as jest.Mock).mockImplementation(() => {
+      throw new Error('positionId must be a positive integer');
+    });
+
+    await removeCandidateFromPosition(mockRequest as Request, mockResponse as Response);
+    expect(mockStatus).toHaveBeenCalledWith(400);
+  });
+
+  it('should return 404 when relation is not found', async () => {
+    mockRequest = { params: { positionId: '1', candidateId: '2' } };
+    (validateCandidatePositionDeletion as jest.Mock).mockImplementation(() => {});
+    (removeCandidateFromPositionService as jest.Mock).mockRejectedValue(new Error('Application relation not found'));
+
+    await removeCandidateFromPosition(mockRequest as Request, mockResponse as Response);
+    expect(mockStatus).toHaveBeenCalledWith(404);
   });
 });

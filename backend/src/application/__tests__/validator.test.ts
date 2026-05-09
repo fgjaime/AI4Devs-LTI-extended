@@ -1,4 +1,4 @@
-import { validateInterviewData, validatePositionUpdateData, validateInterviewUpdateData, validateInterviewDeletion } from '../validator';
+import { validateInterviewData, validatePositionUpdateData, validateInterviewUpdateData, validateInterviewDeletion, validateCandidatePositionDeletion } from '../validator';
 
 describe('validateInterviewData', () => {
     describe('Valid interview data scenarios', () => {
@@ -1150,5 +1150,19 @@ describe('validateInterviewDeletion', () => {
 
             expect(() => validateInterviewDeletion(candidateId, interviewId, deletionData)).not.toThrow();
         });
+    });
+});
+
+describe('validateCandidatePositionDeletion', () => {
+    it('should accept valid positive integer ids', () => {
+        expect(() => validateCandidatePositionDeletion(1, 2)).not.toThrow();
+    });
+
+    it('should reject non-positive positionId', () => {
+        expect(() => validateCandidatePositionDeletion(0, 2)).toThrow('positionId must be a positive integer');
+    });
+
+    it('should reject non-positive candidateId', () => {
+        expect(() => validateCandidatePositionDeletion(1, -1)).toThrow('candidateId must be a positive integer');
     });
 });
