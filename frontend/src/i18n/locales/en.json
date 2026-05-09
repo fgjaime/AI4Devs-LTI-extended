@@ -12,6 +12,16 @@
   "dashboard": {
     "title": "Recruiter Dashboard",
     "logoAlt": "LTI Logo",
+    "sections": {
+      "candidates": {
+        "heading": "Candidates",
+        "lead": "Create applicant profiles and manage candidate records."
+      },
+      "positions": {
+        "heading": "Positions",
+        "lead": "Open roles, pipelines, and position details."
+      }
+    },
     "candidates": {
       "title": "Add Candidate",
       "button": "Add New Candidate"

@@ -35,6 +35,13 @@ describe('RecruiterDashboard i18n', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('Recruiter Dashboard')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Candidates' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Positions' })).toBeInTheDocument();
+    expect(
+      screen.getByText('Create applicant profiles and manage candidate records.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Add New Candidate' })).toHaveAttribute('href', '/add-candidate');
+    expect(screen.getByRole('link', { name: 'Go to Positions' })).toHaveAttribute('href', '/positions');
   });
 
   it('renders Spanish heading with locale es', () => {
@@ -47,5 +54,13 @@ describe('RecruiterDashboard i18n', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('Dashboard del Reclutador')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Candidatos' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Posiciones' })).toBeInTheDocument();
+    expect(screen.getByText('Crea fichas de candidatos y gestiona sus datos.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Añadir Nuevo Candidato' })).toHaveAttribute(
+      'href',
+      '/add-candidate'
+    );
+    expect(screen.getByRole('link', { name: 'Ir a Posiciones' })).toHaveAttribute('href', '/positions');
   });
 });
