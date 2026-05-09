@@ -336,6 +336,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Assign existing candidate to a position
+      description: |
+        Creates a new Application linking an existing Candidate to the specified Position
+        and places the candidate on the first interview step (lowest `orderIndex`) of the
+        position's InterviewFlow. Runs inside a single Prisma transaction. The position must
+        be in status `Draft` or `Open`; positions in `Closed` or `Hired` are rejected.
+      tags:
+        - Positions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Position ID (`positionId`)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignCandidateRequest'
+      responses:
+        '201':
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateResponse'
+        '400':
+          description: Validation error (`code: VALIDATION_ERROR`). Returned when the request body is malformed, the path id is not numeric, or `notes` exceeds 500 characters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateErrorResponse'
+        '404':
+          description: Position not found (`code: POSITION_NOT_FOUND`) or Candidate not found (`code: CANDIDATE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateErrorResponse'
+        '409':
+          description: Conflict — `code: POSITION_CLOSED` when the position status is `Closed` or `Hired`, or `code: DUPLICATE_APPLICATION` when an Application already exists for the (positionId, candidateId) pair.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateErrorResponse'
+        '422':
+          description: Position has no configured interview steps (`code: NO_INTERVIEW_STEPS`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateErrorResponse'
+        '500':
+          description: Unexpected server error (`code: INTERNAL_ERROR`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCandidateErrorResponse'
 
   /positions/{id}/candidates/names:
     get:
@@ -1082,6 +1141,78 @@ components:
           type: string
           description: Detailed error information
       required:
+        - message
+
+    AssignCandidateRequest:
+      type: object
+      properties:
+        candidateId:
+          type: integer
+          minimum: 1
+          description: ID of the existing Candidate to assign to the position. Required, positive integer.
+        notes:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Optional free-text notes about the candidate for this position. Maximum 500 characters.
+      required:
+        - candidateId
+      additionalProperties: false
+
+    AssignCandidateResponse:
+      type: object
+      description: |
+        Created Application row. The schema exposes both `currentInterviewStep` (canonical, single FK column in the database) and `interviewStepId` (alias of the same value, kept for frontend compatibility — they will always be equal).
+      properties:
+        id:
+          type: integer
+          description: Application ID
+        positionId:
+          type: integer
+        candidateId:
+          type: integer
+        applicationDate:
+          type: string
+          format: date-time
+        currentInterviewStep:
+          type: integer
+          description: ID of the InterviewStep on which the candidate was placed (lowest `orderIndex`).
+        interviewStepId:
+          type: integer
+          description: Alias of `currentInterviewStep`. Same numeric value. Marked for removal once the frontend is fully migrated to `currentInterviewStep`.
+        notes:
+          type: string
+          nullable: true
+      required:
+        - id
+        - positionId
+        - candidateId
+        - applicationDate
+        - currentInterviewStep
+        - interviewStepId
+
+    AssignCandidateErrorCode:
+      type: string
+      enum:
+        - VALIDATION_ERROR
+        - POSITION_NOT_FOUND
+        - CANDIDATE_NOT_FOUND
+        - POSITION_CLOSED
+        - DUPLICATE_APPLICATION
+        - NO_INTERVIEW_STEPS
+        - INTERNAL_ERROR
+
+    AssignCandidateErrorResponse:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/AssignCandidateErrorCode'
+        message:
+          type: string
+        error:
+          type: string
+      required:
+        - code
         - message
 
 tags:

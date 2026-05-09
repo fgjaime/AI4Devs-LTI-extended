@@ -225,6 +225,36 @@ export const validateInterviewUpdateData = (data: any): void => {
     }
 };
 
+const ASSIGN_CANDIDATE_ALLOWED_FIELDS = ['candidateId', 'notes'];
+
+export const validateAssignCandidateToPositionData = (data: any): void => {
+    if (data === null || data === undefined || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('Request body is required');
+    }
+
+    for (const key of Object.keys(data)) {
+        if (!ASSIGN_CANDIDATE_ALLOWED_FIELDS.includes(key)) {
+            throw new Error(`Unexpected field: ${key}`);
+        }
+    }
+
+    if (data.candidateId === undefined || data.candidateId === null) {
+        throw new Error('candidateId is required');
+    }
+    if (typeof data.candidateId !== 'number' || !Number.isInteger(data.candidateId) || data.candidateId <= 0) {
+        throw new Error('candidateId must be a positive integer');
+    }
+
+    if (data.notes !== undefined && data.notes !== null) {
+        if (typeof data.notes !== 'string') {
+            throw new Error('notes must be a string');
+        }
+        if (data.notes.length > 500) {
+            throw new Error('notes must not exceed 500 characters');
+        }
+    }
+};
+
 export const validateInterviewDeletion = (candidateId: any, interviewId: any, deletionData: any): void => {
     if (typeof candidateId !== 'number' || !Number.isInteger(candidateId)) {
         throw new Error('candidateId must be a valid integer');
