@@ -1,6 +1,7 @@
 # Parallel Feature Tasks
 
-Fill in the tasks below and say **"run parallel-tasks.md"** to start.  
+Fill in the tasks below and say **"run parallel-tasks.md"** to start, or provide explicit arguments like **"run parallel tasks SCRUM-83 SCRUM-84"**.  
+When explicit arguments are provided, they override this file list.  
 Each task runs in its own worktree through the full specboot pipeline (enrich → new → ff → apply → verify).  
 Process stops after verify — no archive, no commit, no worktree cleanup.
 
@@ -22,10 +23,12 @@ Comment out tasks you don't want to run yet.
 -->
 
 Task 1
-SCRUM-81
+SCRUM-83
 
+<!--
 Task 2
 SCRUM-82
+-->
 
 <!--
 ### Task 1

@@ -86,19 +86,23 @@ Continue working on a change by creating the next artifact.
      - `outputPath`: Where to write the artifact
      - `dependencies`: Completed artifacts to read for context
    - **Create the artifact file**:
-     - **CRITICAL for tasks artifact**: If creating `tasks.md`, read `openspec/config.yaml` to get:
-       - Backend-specific rules (mandatory steps, branch naming, etc.)
+     - **CRITICAL for tasks artifact**: If creating `tasks.md`:
+       - Read `openspec/config.yaml` to get backend-specific rules (mandatory steps, branch naming, etc.)
+       - Read `.claude/rules/openspec-tasks-mandatory-steps.mdc` to understand mandatory testing requirements and agent execution responsibilities
        - Task structure requirements
        - All mandatory steps that MUST be included (e.g., Step 0: Create Feature Branch)
+     - **If Jira ticket was provided**: Use ticket content to inform artifact creation
      - Read any completed dependency files for context
      - Use `template` as the structure - fill in its sections
      - Apply `context` and `rules` as constraints when writing - but do NOT copy them into the file
-     - **For tasks artifact**: Ensure all mandatory steps from `config.yaml` are included:
+     - **For tasks artifact**: Ensure all mandatory steps from `config.yaml` and the rule file are included:
        - Step 0: Create Feature Branch (MUST be first step for backend changes)
        - Review and Update Existing Unit Tests (MANDATORY)
        - Run Unit Tests and Verify Database State (MANDATORY)
-       - Manual Endpoint Testing with curl (MANDATORY)
+       - Manual Endpoint Testing with curl (MANDATORY - AGENT MUST EXECUTE)
+       - E2E Testing with Playwright MCP (MANDATORY if applicable - AGENT MUST EXECUTE)
        - Update Technical Documentation (MANDATORY)
+     - **For manual testing tasks**: Include sub-tasks that make it clear the agent must execute tests (e.g., "Test GET endpoints with curl", "Restore database state", etc.)
      - Write to the output path specified in instructions
    - Show what was created and what's now unlocked
    - STOP after creating ONE artifact
@@ -142,6 +146,7 @@ For other schemas, follow the `instruction` field from the CLI output.
 - Create ONE artifact per invocation
 - Always read dependency artifacts before creating a new one
 - Never skip artifacts or create out of order
+- **For tasks.md**: Read `.claude/rules/openspec-tasks-mandatory-steps.mdc` to ensure all mandatory steps are included with proper agent execution requirements
 - If context is unclear, ask the user before creating
 - Verify the artifact file exists after writing before marking progress
 - Use the schema's artifact sequence, don't assume specific artifact names
