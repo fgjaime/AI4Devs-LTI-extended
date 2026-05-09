@@ -60,5 +60,32 @@ export const positionService = {
       const err = new Error(message);
       throw err;
     }
+  // Assign existing candidate to a position
+  assignCandidateToPosition: async (positionId, payload) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/positions/${positionId}/candidates`, payload);
+      return response.data;
+    } catch (error) {
+      const data = error.response?.data;
+      const code = data?.code ?? 'unknown';
+      const message = data?.error ?? data?.message ?? error.message ?? 'Error assigning candidate';
+      const err = new Error(message);
+      err.code = code;
+      err.status = error.response?.status;
+      throw err;
+    }
+  },
+
+  // Get candidate ids currently assigned to a position
+  getAssignedCandidateIds: async (positionId) => {
+    const response = await axios.get(`${API_BASE_URL}/positions/${positionId}/candidates/names`);
+    const body = response.data;
+    const rows = Array.isArray(body) ? body : [];
+    return rows
+      .map((row) => Number(row?.candidateId))
+      .filter((candidateId) => Number.isInteger(candidateId));
   }
-}; 
+};
+
+export const assignCandidateToPosition = (positionId, payload) =>
+  positionService.assignCandidateToPosition(positionId, payload);

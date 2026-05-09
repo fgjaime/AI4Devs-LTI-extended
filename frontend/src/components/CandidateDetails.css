@@ -1,0 +1,28 @@
+/* Override Bootstrap default offcanvas-end width (400px) only for candidate details. */
+.candidate-details-offcanvas.offcanvas-end {
+  width: 100vw;
+}
+
+@media (min-width: 576px) {
+  .candidate-details-offcanvas.offcanvas-end {
+    width: min(540px, 90vw);
+  }
+}
+
+@media (min-width: 768px) {
+  .candidate-details-offcanvas.offcanvas-end {
+    width: min(640px, 80vw);
+  }
+}
+
+@media (min-width: 992px) {
+  .candidate-details-offcanvas.offcanvas-end {
+    width: clamp(640px, 50vw, 900px);
+  }
+}
+
+@media (min-width: 1400px) {
+  .candidate-details-offcanvas.offcanvas-end {
+    width: clamp(720px, 45vw, 1100px);
+  }
+}

@@ -38,18 +38,18 @@ rules:
   # Rules for backend implementation plans and specs
   spec:
     - When creating backend implementation plans or specs, follow the Backend Implementation Plan Template Structure
-    - All backend plans must include these MANDATORY sections: |
-      1. Header with ticket ID and feature name
-      2. Overview with DDD and clean architecture principles
-      3. Architecture Context (Domain, Application, Presentation layers)
-      4. Implementation Steps (must start with Step 0: Create Feature Branch)
-      5. Implementation Order (numbered list)
-      6. Testing Checklist with mandatory validations
-      7. Error Response Format
-      8. Dependencies
-      9. Notes
-      10. Next Steps After Implementation
-      11. Implementation Verification
+    - "All backend plans must include these MANDATORY sections:"
+    - "1. Header with ticket ID and feature name"
+    - "2. Overview with DDD and clean architecture principles"
+    - "3. Architecture Context (Domain, Application, Presentation layers)"
+    - "4. Implementation Steps (must start with Step 0: Create Feature Branch)"
+    - "5. Implementation Order (numbered list)"
+    - "6. Testing Checklist with mandatory validations"
+    - "7. Error Response Format"
+    - "8. Dependencies"
+    - "9. Notes"
+    - "10. Next Steps After Implementation"
+    - "11. Implementation Verification"
   
   # Backend-specific implementation rules
   backend:
@@ -57,7 +57,7 @@ rules:
     - Apply Domain-Driven Design (DDD) principles
     - Follow clean architecture with Domain, Application, and Presentation layers
     - All implementation must follow TDD (Test-Driven Development)
-    - Branch naming: `feature/[ticket-id]-backend` (required, separate from general task branches)
+    - "Branch naming: feature/[ticket-id]-backend (required, separate from general task branches)"
     - MANDATORY Steps (must be included in all backend implementation plans):
       - Step 0: Create Feature Branch (must be FIRST step)
       - Step N: Review and Update Existing Unit Tests (MANDATORY)
