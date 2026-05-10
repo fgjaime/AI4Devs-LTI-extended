@@ -148,3 +148,13 @@
 - [x] 15.5.3 Assert other candidates have `activeProcesses` of length 1 or 0 as expected
 - [x] 15.5.4 DB state is read-only; no restoration needed
 
+---
+
+## 16. Dashboard: grouped workflow sections (Candidates vs Positions)
+
+> Align home page with recruiter dashboard UX: section headings plus two stacked actions under **Candidates** (add + browse list); **Positions** remains a separate section. Supersedes the former three-column card row (tasks §10).
+
+- [x] 16.1 Add `dashboard.sections.*` strings (EN + ES parity)
+- [x] 16.2 Refactor `RecruiterDashboard.js` (sections + `GET /candidates` entry unchanged at `/candidates`)
+- [x] 16.3 Extend `i18nIntegration.test.tsx`; run frontend test suite (`react-scripts test`)
+

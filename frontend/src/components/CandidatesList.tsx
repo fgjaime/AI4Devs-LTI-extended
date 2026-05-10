@@ -375,6 +375,7 @@ const CandidatesList: React.FC = () => {
             <CandidateDetails
                 candidate={selectedCandidate}
                 onClose={() => navigate('/candidates')}
+                onApplicationRemoved={fetchCandidates}
             />
         </Container>
     );

@@ -60,6 +60,8 @@ export const positionService = {
       const err = new Error(message);
       throw err;
     }
+  },
+
   // Assign existing candidate to a position
   assignCandidateToPosition: async (positionId, payload) => {
     try {
