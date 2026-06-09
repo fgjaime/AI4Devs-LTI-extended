@@ -138,13 +138,13 @@ Run each component in a separate terminal.
 From the project root:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Optional verification:
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### 2. Start the Backend
@@ -177,19 +177,6 @@ npm start
 
 The frontend runs at `http://localhost:3000`.
 
-### Startup Summary
-
-```bash
-docker-compose up -d
-```
-
-```bash
-cd backend && npm install && npm run prisma:generate && npx prisma migrate deploy && npm run dev
-```
-
-```bash
-cd frontend && npm install && npm start
-```
 
 For detailed environment configuration and testing guidelines, see the [Development Guide](docs/development_guide.md).
 
