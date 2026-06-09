@@ -123,7 +123,75 @@ AI4Devs-LTI/
 
 ## 🚀 Setup & Testing
 
-For detailed setup instructions, environment configuration, and testing guidelines, see the [Development Guide](docs/development_guide.md).
+### Quick Start
+
+The project has three runtime components:
+
+- PostgreSQL database via Docker Compose
+- Backend API via Node.js and Prisma
+- Frontend application via React
+
+Run each component in a separate terminal.
+
+### 1. Start the Database
+
+From the project root:
+
+```bash
+docker-compose up -d
+```
+
+Optional verification:
+
+```bash
+docker-compose ps
+```
+
+### 2. Start the Backend
+
+From the `backend` directory:
+
+```bash
+npm install
+npm run prisma:generate
+npx prisma migrate deploy
+npm run dev
+```
+
+Optional seed data:
+
+```bash
+npx prisma db seed
+```
+
+The backend API runs at `http://localhost:3010`.
+
+### 3. Start the Frontend
+
+From the `frontend` directory:
+
+```bash
+npm install
+npm start
+```
+
+The frontend runs at `http://localhost:3000`.
+
+### Startup Summary
+
+```bash
+docker-compose up -d
+```
+
+```bash
+cd backend && npm install && npm run prisma:generate && npx prisma migrate deploy && npm run dev
+```
+
+```bash
+cd frontend && npm install && npm start
+```
+
+For detailed environment configuration and testing guidelines, see the [Development Guide](docs/development_guide.md).
 
 ## 📊 Database Schema
 
