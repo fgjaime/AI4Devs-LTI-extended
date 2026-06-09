@@ -41,7 +41,6 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('../services/interviewService', () => ({
-  createInterview: jest.fn(),
   updateInterview: jest.fn(),
   deleteInterview: jest.fn(),
 }));

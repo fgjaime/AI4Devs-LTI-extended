@@ -110,8 +110,6 @@
       "applicationDate": "Fecha de solicitud:",
       "interviews": "Entrevistas",
       "noInterviews": "Sin entrevistas todavía",
-      "noApplicationsCreate": "Este candidato no tiene solicitudes. Crea una entrevista desde la vista de posición.",
-      "createInterview": "Crear nueva entrevista",
       "failedToLoad": "Error al cargar los detalles del candidato"
     }
   },
@@ -199,8 +197,6 @@
     "score": "Puntuación (0-5, opcional)",
     "scoreLabel": "Puntuación {{star}}",
     "notes": "Notas (máx. {{max}} caracteres)",
-    "creating": "Creando...",
-    "createButton": "Crear entrevista",
     "editTitle": "Editar Entrevista",
     "deleteTitle": "Eliminar entrevista",
     "deleteWarning": "Esto eliminará permanentemente la entrevista. Por favor, proporciona un motivo para la eliminación (obligatorio).",
@@ -217,10 +213,8 @@
     "scoreDisplay": "Puntuación:",
     "notesLabel": "Notas:",
     "failedToLoad": "Error al cargar los detalles del candidato",
-    "failedToCreate": "Error al crear la entrevista",
     "failedToUpdate": "Error al actualizar la entrevista",
     "failedToDelete": "Error al eliminar la entrevista",
-    "createSuccess": "¡Entrevista creada con éxito!",
     "updateSuccess": "¡Entrevista actualizada con éxito!",
     "deleteSuccess": "Entrevista eliminada con éxito.",
     "editInterview": "Editar entrevista",

@@ -118,35 +118,6 @@ const isValidISO8601DateTime = (value: string): boolean => {
     return !Number.isNaN(parsed);
 };
 
-const REQUIRED_INTEGER_MSG = (field: string) => `${field} is required and must be an integer`;
-
-export const validateInterviewData = (_candidateId: number, data: any): void => {
-    if (data.applicationId == null || typeof data.applicationId !== 'number' || !Number.isInteger(data.applicationId)) {
-        throw new Error(REQUIRED_INTEGER_MSG('applicationId'));
-    }
-    if (data.interviewStepId == null || typeof data.interviewStepId !== 'number' || !Number.isInteger(data.interviewStepId)) {
-        throw new Error(REQUIRED_INTEGER_MSG('interviewStepId'));
-    }
-    if (data.employeeId == null || typeof data.employeeId !== 'number' || !Number.isInteger(data.employeeId)) {
-        throw new Error(REQUIRED_INTEGER_MSG('employeeId'));
-    }
-    if (typeof data.interviewDate !== 'string') {
-        throw new Error('interviewDate is required and must be a string');
-    }
-    if (!isValidISO8601DateTime(data.interviewDate)) {
-        throw new Error('interviewDate must be a valid ISO 8601 date-time format');
-    }
-    if (data.score != null && data.score !== undefined) {
-        if (typeof data.score !== 'number' || !Number.isInteger(data.score) || data.score < 0 || data.score > 5) {
-            throw new Error('Score must be between 0 and 5');
-        }
-    }
-    if (data.notes != null && data.notes !== undefined) {
-        if (typeof data.notes !== 'string') throw new Error('notes must be a string');
-        if (data.notes.length > 1000) throw new Error('Notes must not exceed 1000 characters');
-    }
-};
-
 const POSITION_STATUS_VALUES = ['Draft', 'Open', 'Closed', 'Hired'];
 
 export const validatePositionUpdateData = (data: any): void => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Offcanvas, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { Pencil, Trash } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
-import { createInterview, updateInterview, deleteInterview } from '../services/interviewService';
+import { updateInterview, deleteInterview } from '../services/interviewService';
 import { positionService } from '../services/positionService';
 import './CandidateDetails.css';
 
@@ -16,23 +16,6 @@ const isInterviewDeletable = (interview) => {
   const result = interview?.result;
   return result == null || result === '' || result === 'Pending';
 };
-
-/** Return current date and time in datetime-local format (YYYY-MM-DDTHH:mm) */
-const getNowDatetimeLocal = () => {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
-const getInitialFormState = () => ({
-  applicationId: '',
-  interviewStepId: '',
-  employeeId: '',
-  interviewDate: getNowDatetimeLocal(),
-  score: null,
-  notes: '',
-  result: 'Pending'
-});
 
 const getInitialEditFormState = () => ({
   interviewStepId: '',
@@ -55,13 +38,8 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
   const { t } = useTranslation();
   const [candidateDetails, setCandidateDetails] = useState(null);
   const [employees, setEmployees] = useState([]);
-  const [interviewSteps, setInterviewSteps] = useState([]);
-  const [formData, setFormData] = useState(getInitialFormState());
-  const [loading, setLoading] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [validationErrors, setValidationErrors] = useState({});
 
   const [editingInterview, setEditingInterview] = useState(null);
   const [editFormData, setEditFormData] = useState(getInitialEditFormState());
@@ -84,7 +62,6 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
     if (candidate) {
       setError(null);
       setSuccessMessage(null);
-      setValidationErrors({});
       fetch(`${API_BASE_URL}/candidates/${candidate.id}`)
         .then((response) => response.json())
         .then((data) => setCandidateDetails(data))
@@ -105,59 +82,6 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
         setEmployees([]);
       });
   }, [candidate]);
-
-  useEffect(() => {
-    if (!candidateDetails || !candidateDetails.applications?.length) return;
-    const contextApplicationId = candidate?.applicationId;
-    if (contextApplicationId) {
-      const app = candidateDetails.applications.find((a) => Number(a.id) === Number(contextApplicationId));
-      if (app) {
-        setFormData((prev) => ({ ...prev, applicationId: String(app.id) }));
-        fetchInterviewStepsForPosition(app.position?.id);
-      }
-    }
-  }, [candidateDetails, candidate?.applicationId]);
-
-  const fetchInterviewStepsForPosition = (positionId) => {
-    if (!positionId) {
-      setInterviewSteps([]);
-      return;
-    }
-    setLoading(true);
-    fetch(`${API_BASE_URL}/positions/${positionId}/interviewFlow`)
-      .then((response) => response.json())
-      .then((data) => {
-        const steps = data?.interviewFlow?.interviewFlow?.interviewSteps ?? [];
-        setInterviewSteps(steps);
-        setFormData((prev) =>
-          steps.length > 0 && !prev.interviewStepId
-            ? { ...prev, interviewStepId: String(steps[0].id) }
-            : prev
-        );
-      })
-      .catch(() => setInterviewSteps([]))
-      .finally(() => setLoading(false));
-  };
-
-  const handleApplicationChange = (e) => {
-    const applicationId = e.target.value;
-    setFormData((prev) => ({ ...prev, applicationId, interviewStepId: '' }));
-    setInterviewSteps([]);
-    if (!applicationId) return;
-    const app = candidateDetails?.applications?.find((a) => String(a.id) === applicationId);
-    if (app?.position?.id) fetchInterviewStepsForPosition(app.position.id);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (validationErrors[name]) setValidationErrors((prev) => ({ ...prev, [name]: null }));
-  };
-
-  const handleScoreChange = (value) => {
-    const newScore = formData.score === value ? null : value;
-    setFormData((prev) => ({ ...prev, score: newScore }));
-  };
 
   const openEditModal = (interview, application) => {
     const stepId = interview.interviewStepId ?? interview.interviewStep?.id;
@@ -252,11 +176,6 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
       setSuccessMessage('Application removed successfully');
       const refreshed = await fetch(`${API_BASE_URL}/candidates/${candidate.id}`).then((response) => response.json());
       setCandidateDetails(refreshed);
-      setFormData((prev) => {
-        const stillExists = refreshed?.applications?.some((app) => String(app.id) === prev.applicationId);
-        return stillExists ? prev : { ...prev, applicationId: '', interviewStepId: '' };
-      });
-      setInterviewSteps([]);
       closeRemoveApplicationModal();
       if (typeof onApplicationRemoved === 'function') {
         await onApplicationRemoved();
@@ -379,65 +298,7 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
     }
   };
 
-  const validateForm = () => {
-    const errors = {};
-    if (!formData.applicationId) errors.applicationId = t('validation.application.required');
-    if (!formData.interviewStepId) errors.interviewStepId = t('validation.interviewStep.required');
-    if (!formData.employeeId) errors.employeeId = t('validation.employee.required');
-    if (!formData.interviewDate) errors.interviewDate = t('validation.interviewDate.required');
-    if (formData.notes && formData.notes.length > NOTES_MAX_LENGTH) {
-      errors.notes = t('validation.notes.tooLong', { max: NOTES_MAX_LENGTH });
-    }
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccessMessage(null);
-    if (!validateForm()) return;
-
-    const interviewDateISO = formData.interviewDate
-      ? new Date(formData.interviewDate).toISOString()
-      : null;
-
-    const payload = {
-      applicationId: Number(formData.applicationId),
-      interviewStepId: Number(formData.interviewStepId),
-      employeeId: Number(formData.employeeId),
-      interviewDate: interviewDateISO,
-      score: formData.score != null && formData.score !== '' ? Number(formData.score) : null,
-      notes: formData.notes && formData.notes.trim() ? formData.notes.trim() : null,
-      result: formData.result || 'Pending'
-    };
-
-    setSubmitLoading(true);
-    try {
-      const created = await createInterview(candidate.id, payload);
-      setSuccessMessage(t('interviews.createSuccess'));
-      setCandidateDetails((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          applications: prev.applications.map((app) =>
-            app.id === created.applicationId
-              ? { ...app, interviews: [...(app.interviews || []), created] }
-              : app
-          )
-        };
-      });
-      setFormData(getInitialFormState());
-      setInterviewSteps([]);
-    } catch (err) {
-      setError(err.message || t('interviews.failedToCreate'));
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
-
   const applications = candidateDetails?.applications ?? [];
-  const hasApplications = applications.length > 0;
 
   return (
     <Offcanvas show={!!candidate} onHide={onClose} placement="end" className="candidate-details-offcanvas">
@@ -579,165 +440,8 @@ const CandidateDetails = ({ candidate, onClose, onApplicationRemoved }) => {
               <p>{t('candidates.details.noApplications')}</p>
             )}
 
-            <hr className="my-3" />
-            <h5>{t('candidates.details.createInterview')}</h5>
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
             {error && <Alert variant="danger">{error}</Alert>}
-
-            {hasApplications ? (
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.application')}</Form.Label>
-                  <Form.Select
-                    name="applicationId"
-                    value={formData.applicationId}
-                    onChange={handleApplicationChange}
-                    isInvalid={!!validationErrors.applicationId}
-                  >
-                    <option value="">{t('interviews.selectApplication')}</option>
-                    {applications.map((app) => (
-                      <option key={app.id} value={app.id}>
-                        {app.position?.title} - {new Date(app.applicationDate).toLocaleDateString()}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  {validationErrors.applicationId && (
-                    <Form.Control.Feedback type="invalid">
-                      {validationErrors.applicationId}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.dateTime')}</Form.Label>
-                  <Form.Control
-                    type="datetime-local"
-                    name="interviewDate"
-                    value={formData.interviewDate}
-                    onChange={handleInputChange}
-                    isInvalid={!!validationErrors.interviewDate}
-                  />
-                  {validationErrors.interviewDate && (
-                    <Form.Control.Feedback type="invalid">
-                      {validationErrors.interviewDate}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.step')}</Form.Label>
-                  <Form.Select
-                    name="interviewStepId"
-                    value={formData.interviewStepId}
-                    onChange={handleInputChange}
-                    disabled={!formData.applicationId || loading}
-                    isInvalid={!!validationErrors.interviewStepId}
-                  >
-                    <option value="">{t('interviews.selectStep')}</option>
-                    {interviewSteps.map((step) => (
-                      <option key={step.id} value={step.id}>
-                        {step.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  {validationErrors.interviewStepId && (
-                    <Form.Control.Feedback type="invalid">
-                      {validationErrors.interviewStepId}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.employee')}</Form.Label>
-                  <Form.Select
-                    name="employeeId"
-                    value={formData.employeeId}
-                    onChange={handleInputChange}
-                    isInvalid={!!validationErrors.employeeId}
-                  >
-                    <option value="">{t('interviews.selectEmployee')}</option>
-                    {employees.map((emp) => (
-                      <option key={emp.id} value={emp.id}>
-                        {emp.name} ({emp.email})
-                      </option>
-                    ))}
-                  </Form.Select>
-                  {validationErrors.employeeId && (
-                    <Form.Control.Feedback type="invalid">
-                      {validationErrors.employeeId}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.result')}</Form.Label>
-                  <Form.Select
-                    name="result"
-                    value={formData.result}
-                    onChange={handleInputChange}
-                  >
-                    {INTERVIEW_RESULTS.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.score')}</Form.Label>
-                  <div>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        role="button"
-                        tabIndex={0}
-                        style={{
-                          cursor: 'pointer',
-                          color: (formData.score ?? 0) >= star ? 'gold' : 'gray',
-                          marginRight: 2
-                        }}
-                        onClick={() => handleScoreChange(star)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleScoreChange(star)}
-                        aria-label={t('interviews.scoreLabel', { star })}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label>{t('interviews.notes', { max: NOTES_MAX_LENGTH })}</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleInputChange}
-                    isInvalid={!!validationErrors.notes}
-                  />
-                  <Form.Text className="text-muted">
-                    {(formData.notes || '').length}/{NOTES_MAX_LENGTH}
-                  </Form.Text>
-                  {validationErrors.notes && (
-                    <Form.Control.Feedback type="invalid">
-                      {validationErrors.notes}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={submitLoading}
-                >
-                  {submitLoading ? t('interviews.creating') : t('interviews.createButton')}
-                </Button>
-              </Form>
-            ) : (
-              <p>{t('candidates.details.noApplicationsCreate')}</p>
-            )}
 
             <Modal show={!!editingInterview} onHide={closeEditModal}>
               <Modal.Header closeButton>

@@ -110,8 +110,6 @@
       "applicationDate": "Application date:",
       "interviews": "Interviews",
       "noInterviews": "No interviews yet",
-      "noApplicationsCreate": "This candidate has no applications. Create an interview from a position view.",
-      "createInterview": "Create new interview",
       "failedToLoad": "Failed to load candidate details"
     }
   },
@@ -199,8 +197,6 @@
     "score": "Score (0-5, optional)",
     "scoreLabel": "Score {{star}}",
     "notes": "Notes (max {{max}} characters)",
-    "creating": "Creating...",
-    "createButton": "Create interview",
     "editTitle": "Edit Interview",
     "deleteTitle": "Delete interview",
     "deleteWarning": "This will permanently remove the interview. Please provide a reason for the deletion (required).",
@@ -217,10 +213,8 @@
     "scoreDisplay": "Score:",
     "notesLabel": "Notes:",
     "failedToLoad": "Failed to load candidate details",
-    "failedToCreate": "Failed to create interview",
     "failedToUpdate": "Failed to update interview",
     "failedToDelete": "Failed to delete interview",
-    "createSuccess": "Interview created successfully!",
     "updateSuccess": "Interview updated successfully!",
     "deleteSuccess": "Interview deleted successfully.",
     "editInterview": "Edit interview",

@@ -1,67 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { createInterview, updateInterview, deleteInterview } from '../../application/services/interviewService';
-import { validateInterviewData, validateInterviewUpdateData, validateInterviewDeletion } from '../../application/validator';
-
-/**
- * @route POST /candidates/:candidateId/interviews
- * @description Creates a new interview for a candidate
- * @access Public
- */
-export const createInterviewController = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        // Extract candidateId from URL params
-        const candidateId = parseInt(req.params.candidateId);
-        
-        // Validate candidateId format
-        if (isNaN(candidateId)) {
-            return res.status(400).json({
-                message: 'Validation error',
-                error: 'Invalid candidate ID format'
-            });
-        }
-
-        // Extract interview data from request body
-        const interviewData = req.body;
-
-        // Validate interview data
-        try {
-            validateInterviewData(candidateId, interviewData);
-        } catch (validationError: any) {
-            return res.status(400).json({
-                message: 'Validation error',
-                error: validationError.message
-            });
-        }
-
-        // Create interview
-        const createdInterview = await createInterview(candidateId, interviewData);
-
-        // Return 201 Created with interview data
-        return res.status(201).json(createdInterview);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            // Handle specific error types
-            if (error.message.includes('not found') || error.message.includes('does not belong')) {
-                return res.status(404).json({
-                    message: 'Resource not found',
-                    error: error.message
-                });
-            }
-            
-            // Handle other errors as 500
-            return res.status(500).json({
-                message: 'Internal server error',
-                error: 'An unexpected error occurred'
-            });
-        }
-        
-        // Handle unknown errors
-        return res.status(500).json({
-            message: 'Internal server error',
-            error: 'An unexpected error occurred'
-        });
-    }
-};
+import { updateInterview, deleteInterview } from '../../application/services/interviewService';
+import { validateInterviewUpdateData, validateInterviewDeletion } from '../../application/validator';
 
 /**
  * @route PATCH /candidates/:candidateId/interviews/:interviewId
