@@ -30,6 +30,7 @@ For detailed standards and guidelines specific to different areas of the project
 - [Backend Standards](./backend-standards.md) - API development, database patterns, testing, security and backend best practices
 - [Frontend Standards](./frontend-standards.md) - React components, UI/UX guidelines, and frontend architecture
 - [Documentation Standards](./documentation-standards.md) - Technical documentation structure, formatting, and maintenance guidelines, including AI standards like this document
+- [OpenSpec Tasks Mandatory Steps](./openspec-tasks-mandatory-steps.md) - Required checklist and execution rules when creating or updating OpenSpec `tasks.md` files
 
 ## 4. Project Skills
 
@@ -68,3 +69,4 @@ Required order:
 4. Re-run verification against the updated artifacts before archiving.
 
 Do not apply direct code-only fixes in this window without updating OpenSpec artifacts.
+

@@ -201,6 +201,114 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /candidates/{candidateId}/interviews/{interviewId}:
+    patch:
+      summary: Update an existing interview
+      description: Partially updates an existing interview for a candidate.
+      tags:
+        - Candidates
+      parameters:
+        - in: path
+          name: candidateId
+          required: true
+          schema:
+            type: integer
+          description: ID of the candidate
+        - in: path
+          name: interviewId
+          required: true
+          schema:
+            type: integer
+          description: ID of the interview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInterviewRequest'
+      responses:
+        '200':
+          description: Interview updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Interview, candidate, or related resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete an interview
+      description: Deletes an existing interview. Completed interviews (Passed/Failed) cannot be deleted.
+      tags:
+        - Candidates
+      parameters:
+        - in: path
+          name: candidateId
+          required: true
+          schema:
+            type: integer
+          description: ID of the candidate
+        - in: path
+          name: interviewId
+          required: true
+          schema:
+            type: integer
+          description: ID of the interview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+              required:
+                - reason
+      responses:
+        '200':
+          description: Interview deleted successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Interview or candidate not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Business rule violation (e.g. completed interview cannot be deleted)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /positions:
     get:
       summary: Get all positions
@@ -1298,6 +1406,59 @@ components:
         - DUPLICATE_APPLICATION
         - NO_INTERVIEW_STEPS
         - INTERNAL_ERROR
+
+    InterviewResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        interviewStepId:
+          type: integer
+        employeeId:
+          type: integer
+        interviewDate:
+          type: string
+          format: date-time
+        result:
+          type: string
+          nullable: true
+          enum: [Pending, Passed, Failed, null]
+        score:
+          type: integer
+          nullable: true
+          minimum: 0
+          maximum: 5
+        notes:
+          type: string
+          nullable: true
+
+    UpdateInterviewRequest:
+      type: object
+      properties:
+        interviewStepId:
+          type: integer
+          minimum: 1
+        employeeId:
+          type: integer
+          minimum: 1
+        interviewDate:
+          type: string
+          format: date-time
+        result:
+          type: string
+          nullable: true
+          enum: [Pending, Passed, Failed]
+        score:
+          type: integer
+          nullable: true
+          minimum: 0
+          maximum: 5
+        notes:
+          type: string
+          maxLength: 1000
+          nullable: true
 
     AssignCandidateErrorResponse:
       type: object
