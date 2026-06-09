@@ -155,13 +155,8 @@ From the `backend` directory:
 npm install
 npm run prisma:generate
 npx prisma migrate deploy
-npm run dev
-```
-
-Optional seed data:
-
-```bash
 npx prisma db seed
+npm run dev
 ```
 
 The backend API runs at `http://localhost:3010`.
